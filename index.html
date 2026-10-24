@@ -552,7 +552,7 @@ html.cur-on,html.cur-on *{cursor:none !important}
 @keyframes wig{25%{translate:-5px 0}75%{translate:5px 0}}
 
 .pcx .miss{background:var(--missing);color:var(--mute);padding:0 6px}
-.pcx button,.pcx input,.pcx textarea{font:inherit;color:inherit;background:none;border:0}
+:where(.pcx) :where(button,input,textarea){font:inherit;color:inherit;background:none;border:0}
 .pc__base{display:flex;justify-content:space-between;gap:16px;margin:64px var(--pad) 0;padding:20px 0 24px;border-top:1px solid var(--line)}
 @media (max-width:760px){
   .pcx{padding-top:56px}
