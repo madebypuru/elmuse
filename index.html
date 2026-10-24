@@ -1,0 +1,1880 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Elmuse Studio</title>
+<meta name="description" content="Elmuse is a creative studio in Jaipur. You bring the spark; we build brands, spaces and experiences.">
+<script>document.documentElement.classList.add("js")</script>
+<style>
+@font-face{font-family:"Regie";src:url("fonts/regie-regular.woff2") format("woff2");font-display:swap}
+@font-face{font-family:"Proxima Nova";src:url("fonts/proxima-nova-regular.woff2") format("woff2");font-display:swap}
+:root{
+  /* one ground, one ink, evergreen as accent; dark only where the content changes mode */
+  --ground:#F7F3ED; --ink:#1B2414; --mute:#5E594F; --line:rgba(27,36,20,.16);
+  --green:#2B3D21; --dark:#18210F; --on-dark:#F7F3ED; --mute-dark:rgba(247,243,237,.78);
+  --missing:#E4DED3;
+  --wait:#E6E2D8; /* photos load on this warm block */
+  --h:"Regie", Georgia, serif; --t:"Proxima Nova", "Helvetica Neue", Arial, sans-serif;
+  --pad:40px; --gap:24px;
+  --ease:cubic-bezier(.7,0,.2,1); --settle:cubic-bezier(.2,.7,.2,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--ground);color:var(--ink);font:16px/1.55 var(--t);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+img,video{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2px solid var(--green);outline-offset:3px}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+section[id]{scroll-margin-top:64px}
+
+/* the three sizes: heading, text, label */
+.h{font-family:var(--h);font-weight:400;font-size:clamp(26px,2.6vw,38px);line-height:1.1;text-transform:uppercase;letter-spacing:.01em;text-wrap:balance}
+.l{font-size:12px;line-height:1.4;text-transform:uppercase;letter-spacing:.08em}
+.mute{color:var(--mute)}
+.link{border-bottom:1px solid currentColor;padding-bottom:1px;transition:opacity .2s}
+.link:hover{opacity:.6}
+
+/* 12-column grid, labels in columns 1–3 */
+.g{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:var(--gap);padding-inline:var(--pad)}
+.lab{grid-column:1/4}
+.c4-9{grid-column:4/10}.c4-8{grid-column:4/9}.c4-7{grid-column:4/8}.c4-6{grid-column:4/7}.c7-9{grid-column:7/10}
+.c8-12{grid-column:8/13}.c9-12{grid-column:9/13}.c10-12{grid-column:10/13}
+
+/* nav: floating and quiet; hides when you scroll down, returns when you scroll up */
+.nav{position:fixed;top:14px;left:var(--pad);right:var(--pad);z-index:30;display:flex;justify-content:space-between;align-items:center;pointer-events:none;transition:transform .5s var(--settle),opacity .35s}
+.nav > *{pointer-events:auto}
+.nav.is-hidden{transform:translateY(-150%);opacity:0}
+.nav .wm{font-weight:600;font-size:18px;letter-spacing:-.02em;color:var(--ink);transition:color .3s}
+.nav.on-dark .wm{color:var(--on-dark)}
+.nav__pill{display:flex;align-items:center;gap:2px;padding:4px;border-radius:999px;background:rgba(247,243,237,.8);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+.nav__pill a{font-size:12px;line-height:1;letter-spacing:.08em;text-transform:uppercase;color:var(--ink);padding:9px 14px;border-radius:999px;transition:background .25s}
+.nav__pill a:hover{background:rgba(27,36,20,.07)}
+.nav__pill a.is-current{background:rgba(27,36,20,.1)}
+.nav__pill a.nav__cta{background:var(--green);color:var(--ground)}
+.nav__pill a.nav__cta:hover{background:#1E2B17}
+
+/* labels: small plain text, never a filled pill */
+.tag{display:inline-block;font-size:12px;line-height:1.4;letter-spacing:.08em;text-transform:uppercase;color:inherit}
+[data-p]{--tc:var(--wait)}
+
+/* calls to action: one solid button in brand green, a light version on dark ground */
+.cta{display:inline-flex;align-items:center;gap:10px;padding:14px 22px 13px;border-radius:999px;background:var(--green);color:var(--ground);font-size:15px;line-height:1;letter-spacing:.01em;white-space:nowrap;transition:background .25s,color .25s,transform .25s var(--settle)}
+.cta:hover{background:#1E2B17;transform:translateY(-1px)}
+.cta__arr{transition:translate .3s var(--settle)}
+.cta:hover .cta__arr{translate:4px 0}
+.cta--light{background:var(--ground);color:var(--green)}
+.cta--light:hover{background:#fff}
+.cta--ghost{background:transparent;color:var(--on-dark);box-shadow:inset 0 0 0 1px rgba(247,243,237,.6)}
+.cta--ghost:hover{background:rgba(247,243,237,.12)}
+.cta--outline{background:transparent;color:var(--green);box-shadow:inset 0 0 0 1px var(--green)}
+.cta--outline:hover{background:rgba(43,61,33,.08)}
+.ctas{display:flex;flex-wrap:wrap;align-items:center;gap:14px 24px}
+
+/* sections on cream open on a thin rule, label in the left column */
+.ruled{position:relative;padding-top:18px}
+.ruled::before{content:"";position:absolute;top:0;left:var(--pad);right:var(--pad);height:1px;background:var(--line)}
+:where(.wwd,.work,.how,.studio,.words,.end) :is(.lab.l,.lab > .l){color:var(--green)}
+
+/* photos load on a plain warm block, then fade in */
+[data-p]{background-color:var(--tc)}
+.tile[data-p],.work__item[data-p]{background-color:transparent}
+.ph-wait{opacity:0}
+.ph-in{animation:phin .7s ease both}
+@keyframes phin{from{opacity:0}to{opacity:1}}
+
+/* image frames: wipe open on entry, drift with scroll, lean in on hover */
+.media{position:relative;overflow:hidden}
+.media img{width:100%;height:auto;scale:1.28;clip-path:inset(100% 0 0 0);transition:clip-path 1.2s var(--ease),scale 1.6s var(--settle);will-change:translate,scale}
+.media.is-in img{scale:1.1;clip-path:inset(0 0 0 0)}
+.media[data-lb]{cursor:zoom-in}
+@media (hover:hover){.media.is-in:hover img{scale:1.15;transition-duration:.9s}}
+
+/* 1 hero: the whole viewport */
+.hero{position:relative;height:100vh;height:100svh;min-height:520px;overflow:hidden;background:var(--dark);color:var(--on-dark)}
+.hero__media{position:absolute;inset:0}
+.hero__media img{width:100%;height:100%;object-fit:cover;scale:1.08;will-change:translate,scale;animation:settle 2.2s var(--settle) both}
+.hero__media img.ph-in{animation:settle 2.2s var(--settle) both,phin .9s ease both}
+@keyframes settle{from{scale:1.24}to{scale:1.08}}
+.hero__shade{position:absolute;inset:0;background:linear-gradient(to top,rgba(24,33,15,.62),transparent 45%),linear-gradient(to bottom,rgba(24,33,15,.45),transparent 22%);pointer-events:none}
+.hero__cap{position:absolute;inset:auto 0 0 0;display:flex;justify-content:space-between;align-items:flex-end;gap:24px 40px;flex-wrap:wrap;padding:0 var(--pad) 36px;will-change:opacity,translate}
+
+/* 2 what we do: intro, then pinned chapters (Floema pattern) */
+.wwd{padding-block:clamp(120px,16vh,180px) clamp(140px,20vh,220px)}
+.wwd__inner{display:grid;justify-items:center;text-align:center;gap:40px;padding-inline:var(--pad)}
+/* a stack of prints: tap and the front one goes to the back */
+.wwd__stackwrap{display:grid;justify-items:center;gap:18px}
+.wwd__stack{position:relative;width:clamp(160px,15vw,220px);aspect-ratio:4/5;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.wwd__stack:focus-visible{outline-offset:12px}
+.wwd__card{position:absolute;inset:0;margin:0;overflow:hidden;background:var(--missing);box-shadow:0 18px 40px rgba(27,36,20,.16);transform:translate(calc(var(--d,0) * 12px),calc(var(--d,0) * -9px)) rotate(var(--rot,0deg)) scale(calc(1 - var(--d,0) * .015));z-index:calc(20 - var(--d,0));opacity:var(--o,1);transition:transform .55s var(--settle),opacity .35s}
+.wwd__card img{width:100%;height:100%;object-fit:cover;pointer-events:none}
+.wwd__card.is-out{transform:translate(118%,-14%) rotate(14deg) scale(.96);transition:transform .38s cubic-bezier(.4,0,.6,1)}
+.wwd__count{font-variant-numeric:tabular-nums}
+.wwd__say{max-width:24ch}
+.wwd__say .w{color:rgba(27,36,20,.22);transition:color .35s}
+.wwd__say .w.on{color:var(--ink)}
+.chapters{position:relative;height:360vh;background:var(--dark);color:var(--on-dark)}
+.ch__stage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden}
+.ch__media,.ch__img{position:absolute;inset:0;margin:0}
+.ch__img{overflow:hidden;will-change:clip-path}
+.ch__img + .ch__img{clip-path:inset(100% 0 0 0)}
+.ch__img img{width:100%;height:100%;object-fit:cover;scale:1.1;will-change:translate}
+.ch__shade{display:none}
+.ch__media{left:clamp(320px,38%,560px)}
+.ch__ui{position:absolute;inset:0 auto 0 0;width:clamp(320px,38%,560px);display:flex !important;flex-direction:column;justify-content:space-between;gap:32px;padding:96px var(--pad) 64px;background:var(--dark)}
+.ch__index{display:grid;gap:6px;align-self:flex-start}
+.ch__count{color:var(--mute-dark)}
+.ch__count span{color:var(--on-dark)}
+.ch__texts{position:relative;min-height:340px;width:100%}
+.ch__text{position:absolute;inset:auto 0 0 0;display:grid;gap:14px;justify-items:start;opacity:0;translate:0 18px;transition:opacity .5s,translate .7s var(--settle);pointer-events:none}
+.ch__text.is-on{opacity:1;translate:0 0;pointer-events:auto}
+.ch__text .l{color:var(--mute-dark)}
+.ch__text .h{max-width:16ch}
+.ch__list{list-style:none;width:100%;border-top:1px solid rgba(247,243,237,.2)}
+.ch__list li{padding:11px 0;border-bottom:1px solid rgba(247,243,237,.2);color:var(--on-dark);font-size:16px}
+.ch__ticks{position:absolute;right:var(--pad);bottom:40px;display:flex;gap:6px}
+.ch__ticks i{width:40px;height:2px;background:rgba(247,243,237,.25);position:relative;overflow:hidden}
+.ch__ticks i::after{content:"";position:absolute;inset:0;background:var(--on-dark);transform-origin:left;transform:scaleX(var(--f,0))}
+
+/* window light: the shadow of a window frame lying across the cream, drifting with the sun */
+.sunlit{position:relative;overflow:clip;isolation:isolate}
+.sunlit::before{content:"";position:absolute;z-index:-1;left:var(--sx,45%);top:var(--sy,-20%);width:min(1150px,95vw);aspect-ratio:10/7;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 700'%3E%3Cg fill='rgb(64,52,30)'%3E%3Crect x='0' y='0' width='1000' height='34'/%3E%3Crect x='0' y='666' width='1000' height='34'/%3E%3Crect x='0' y='0' width='34' height='700'/%3E%3Crect x='966' y='0' width='34' height='700'/%3E%3Crect x='488' y='0' width='24' height='700'/%3E%3Crect x='238' y='0' width='16' height='700'/%3E%3Crect x='746' y='0' width='16' height='700'/%3E%3Crect x='0' y='300' width='1000' height='20'/%3E%3C/g%3E%3C/svg%3E") center/contain no-repeat;filter:blur(16px);opacity:var(--so,.08);transform:skewX(-24deg) rotate(-7deg);pointer-events:none;animation:sun 38s ease-in-out infinite alternate}
+@keyframes sun{from{transform:translate3d(-3%,0,0) skewX(-22deg) rotate(-8deg)}to{transform:translate3d(3%,3%,0) skewX(-27deg) rotate(-5deg)}}
+.wwd{--sx:48%;--sy:-45%}
+.work{--sx:52%;--sy:-4%}
+.how{--sx:-18%;--sy:12%}
+.words{--sx:40%;--sy:-30%}
+.end{--sx:18%;--sy:-6%;--so:.11}
+
+/* 3 work: a pinned story reel. Scrolling slides films, photos and the clients' own words past, in one rhythm */
+.wk{position:relative;--H:min(600px,62vh);--H:min(600px,62svh)}
+.wk__stage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;display:grid;align-content:center;gap:28px}
+.wk__head{align-items:baseline}
+.wk__head .wk__line{grid-column:4/10;max-width:52ch}
+.wk__head .hint{grid-column:10/13;justify-self:end}
+.wk__track{display:flex;gap:24px;padding-inline:var(--pad);width:max-content;will-change:transform}
+.wk__col{flex:none;height:var(--H);display:flex;flex-direction:column;gap:16px}
+.wk__col > *{flex:1 1 0;min-height:0}
+.c-film{width:calc(var(--H) * .5625)}.c-split{width:calc(var(--H) * .66)}.c-tall{width:calc(var(--H) * .78)}.c-say{width:calc(var(--H) * .95)}.c-end{width:calc(var(--H) * .72)}
+.wk__tile{position:relative;overflow:hidden;background:var(--missing)}
+.wk__tile img,.wk__tile video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.wk__tile img{scale:1.14;clip-path:inset(0 0 0 100%);transition:clip-path 1.1s var(--ease),scale 1.6s var(--settle)}
+.wk__tile.is-in img{scale:1;clip-path:inset(0 0 0 0)}
+.wk__tile[data-lb]{cursor:zoom-in}
+@media (hover:hover){.wk__tile.is-in[data-lb]:hover img{scale:1.04;transition-duration:.9s}}
+.wk__cap{position:absolute;left:14px;right:14px;bottom:12px;color:var(--on-dark);text-shadow:0 1px 14px rgba(24,33,15,.6);pointer-events:none}
+.wk__tile::after{content:"";position:absolute;inset:auto 0 0 0;height:40%;background:linear-gradient(to top,rgba(24,33,15,.55),transparent);pointer-events:none}
+.wk__film{cursor:pointer}
+.wk__film .wk__cap{bottom:auto;top:12px}
+.wk__film::after{inset:0 0 auto 0;background:linear-gradient(to bottom,rgba(24,33,15,.5),transparent)}
+.wk__toggle{position:absolute;left:14px;bottom:12px;z-index:2;color:var(--on-dark)}
+.wk__quote{background:rgba(27,36,20,.05);padding:22px;display:flex;flex-direction:column;justify-content:space-between;gap:16px}
+.wk__quote blockquote{font-size:19px;line-height:1.4}
+.wk__say{padding:8px 8px 8px 4px;display:flex;flex-direction:column;justify-content:space-between}
+.wk__say blockquote{font-size:clamp(22px,2vw,28px);line-height:1.3;letter-spacing:-.01em}
+.wk__who{display:grid;gap:2px}
+.wk__who .l{color:var(--ink)}
+.wk__end{background:var(--green);color:var(--on-dark);padding:24px;display:flex;flex-direction:column;justify-content:flex-end;gap:18px}
+.wk__end .acts{display:grid;gap:10px;justify-items:start}
+.wk__foot{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:var(--gap);padding-inline:var(--pad);align-items:center}
+.wk__bar{grid-column:1/13;height:1px;background:var(--line);position:relative}
+.wk__bar i{position:absolute;inset:0;background:var(--ink);transform-origin:left;transform:scaleX(var(--p,0))}
+.wk .rise{transition-delay:calc(var(--i,0) * 70ms)}
+
+/* entrance: text rises in, rules draw across. Only when scripts run, so the page is complete without them */
+html.js .rise{opacity:0;translate:0 18px;transition:opacity .9s var(--settle) calc(var(--i,0) * 70ms),translate 1s var(--settle) calc(var(--i,0) * 70ms)}
+html.js .rise.is-in{opacity:1;translate:0 0}
+html.js .ruled::before{transform:scaleX(0);transform-origin:left;transition:transform 1.4s var(--ease)}
+html.js .ruled.is-in::before{transform:scaleX(1)}
+html.js .hero__cap > *{opacity:0;translate:0 22px;transition:opacity 1s var(--settle),translate 1.2s var(--settle)}
+html.js .hero__cap > :nth-child(2){transition-delay:.15s}
+html.js .hero.is-in .hero__cap > *{opacity:1;translate:0 0}
+
+/* sideways strips you can drag */
+.drag{display:flex;gap:10px;overflow-x:auto;padding-bottom:8px;scrollbar-width:none;cursor:grab;-webkit-user-select:none;user-select:none}
+.drag::-webkit-scrollbar{display:none}
+.drag.is-dragging{cursor:grabbing}
+.drag.is-dragging *{pointer-events:none}
+
+/* 4 reel: the window between the two words opens as you scroll */
+.reel{position:relative;height:280vh;background:var(--dark);color:var(--on-dark);--w0:clamp(150px,17vw,250px)}
+.reel__stage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden}
+.reel__window{position:absolute;inset:0;clip-path:inset(var(--iy,35%) var(--ix,40%));will-change:clip-path}
+.reel__clips{display:flex;height:100%;gap:2px;transform:scale(var(--zoom,1.1))}
+.reel__clips video{flex:1 1 0;min-width:0;height:100%;object-fit:cover;background:var(--green)}
+.reel__words{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:32px;pointer-events:none}
+.reel__gap{width:var(--w0);flex:none}
+.reel__words .h{will-change:transform,opacity}
+.reel__foot{position:absolute;left:0;right:0;bottom:0;display:flex;justify-content:space-between;align-items:center;padding:80px var(--pad) 24px;background:linear-gradient(to top,rgba(24,33,15,.7),transparent);opacity:var(--foot,0);transition:opacity .3s}
+
+/* 5 how we work: statement with a photo inside the line, then the five steps as a strip you drag */
+.how{padding-block:120px 104px}
+.how__head{align-items:start}
+.how__head h2{grid-column:4/13;max-width:19ch}
+.inl{display:inline-block;width:1.5em;height:.78em;vertical-align:-.04em;margin-inline:.12em;overflow:hidden;transition:width .6s var(--settle)}
+.inl img{width:100%;height:100%;object-fit:cover;transition:opacity .4s}
+@media (hover:hover){.how__head h2:hover .inl{width:2.6em}}
+.how__lede{grid-column:4/10;margin-top:28px;max-width:56ch}
+.how__cta{grid-column:4/10;margin-top:28px}
+.steps__head{margin-top:72px;margin-bottom:20px;align-items:baseline}
+.steps__head .hint{grid-column:9/13;justify-self:end}
+.steps{display:flex;gap:0;padding-inline:var(--pad);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.step{flex:none;width:340px;display:grid;align-content:start;gap:14px;padding:22px 24px 28px}
+.step:first-child{padding-left:0}
+.step + .step{border-left:1px solid var(--line)}
+.step__img{aspect-ratio:4/5;cursor:zoom-in}
+.step__img img{height:100%;object-fit:cover}
+.step h3{font-weight:400;font-size:16px;line-height:1.4;margin-top:4px}
+.step p:last-child{max-width:32ch}
+.how__clients{margin-top:40px;align-items:baseline}
+.how__clients p:last-child{grid-column:4/13}
+.how__clients .sep{color:var(--mute);margin-inline:.4em}
+
+/* 6a the walk: scroll walks you through the studio from 9:00 to 18:00 */
+.walk{position:relative;height:900vh;background:var(--dark);color:var(--on-dark)}
+.walk__stage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden}
+.walk__frames{position:absolute;inset:0;will-change:filter}
+.walk__f{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;will-change:opacity,scale}
+.walk__f.is-first{opacity:1}
+.walk__lit{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;scale:1.04;transition:opacity 1.4s var(--settle),scale 2.4s var(--settle)}
+.walk.is-lit .walk__lit{opacity:1;scale:1}
+.walk__tint{position:absolute;inset:0;mix-blend-mode:soft-light;pointer-events:none}
+.walk__sun{position:absolute;inset:-30% -60%;background:linear-gradient(104deg,transparent 41%,rgba(255,238,205,.32) 47%,rgba(255,238,205,.1) 52%,transparent 58%);mix-blend-mode:screen;pointer-events:none;will-change:transform,opacity}
+.walk__shade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(to top,rgba(24,33,15,.7),transparent 40%),linear-gradient(to bottom,rgba(24,33,15,.45),transparent 22%)}
+.walk__ui{position:absolute;inset:0;display:grid;grid-template-rows:auto 1fr auto auto;padding-top:84px;padding-bottom:28px;pointer-events:none}
+.walk__top{display:flex;justify-content:space-between;gap:16px;padding-inline:var(--pad);color:var(--mute-dark)}
+.walk__bottom{align-items:end}
+.walk__clock{font-variant-numeric:tabular-nums}
+.walk__light{color:var(--mute-dark);margin-top:6px}
+.walk__station{display:grid;gap:4px;transition:opacity .35s}
+.walk__station.is-swapping{opacity:0}
+.walk__station .l{color:var(--mute-dark)}
+.walk__center{position:absolute;inset:0;z-index:3;display:grid;place-items:center;pointer-events:none}
+.walk__center > *{grid-area:1/1}
+.walk__hold{display:flex;flex-direction:column;align-items:center;gap:16px;color:var(--on-dark);text-shadow:0 1px 18px rgba(24,33,15,.7);opacity:0;translate:0 10px;transition:opacity .5s,translate .6s var(--settle);pointer-events:none;-webkit-user-select:none;user-select:none;touch-action:none}
+.walk.is-dusk .walk__hold{opacity:1;translate:0 0;pointer-events:auto}
+.walk.is-lit .walk__hold{opacity:0;pointer-events:none}
+.walk__ring{position:relative;display:block;width:88px;height:88px}
+.walk__ring::before{content:"";position:absolute;inset:0;border-radius:50%;border:1px solid rgba(247,243,237,.55);animation:halo 2.4s ease-out infinite}
+@keyframes halo{from{scale:1;opacity:.7}to{scale:1.7;opacity:0}}
+.walk__hold:active .walk__ring::before{animation:none;opacity:0}
+.walk__hold svg{position:relative;width:88px;height:88px;rotate:-90deg}
+.walk__hold circle{fill:none;stroke-width:2}
+.walk__hold .track{stroke:rgba(247,243,237,.25)}
+.walk__hold .fill{stroke:var(--on-dark);stroke-dasharray:264;stroke-dashoffset:calc(264 - 264 * var(--hold,0))}
+.walk__book{opacity:0;translate:0 10px;transition:opacity .6s .4s,translate .8s .4s var(--settle);pointer-events:none}
+.walk.is-lit .walk__book{opacity:1;translate:0 0;pointer-events:auto}
+.walk__bar{position:relative;height:2px;margin:24px var(--pad) 0;background:rgba(247,243,237,.2)}
+.walk__bar b{position:absolute;inset:0 auto 0 0;width:100%;background:var(--on-dark);transform-origin:left;transform:scaleX(var(--pw,0))}
+.walk__bar i{position:absolute;top:-3px;width:1px;height:8px;background:rgba(247,243,237,.5)}
+.studio{padding-block:96px 112px}
+
+/* 6 studio: the wide photo widens to full bleed as you reach it */
+.studio{padding-block:96px 112px}
+.studio .wide{overflow:hidden;cursor:zoom-in}
+.studio .wide img{width:100%;height:auto;scale:1.12;will-change:translate,scale;transition:scale 1s var(--settle)}
+@media (hover:hover){.studio .wide:hover img{scale:1.16}}
+.specs{display:grid;grid-template-columns:auto 1fr;gap:10px 20px}
+.specs dt{padding-top:3px}
+.studio .acts{margin-top:20px;display:flex;gap:24px;flex-wrap:wrap}
+.sets{gap:16px;margin:56px 0 0;padding-inline:var(--pad);align-items:flex-end}
+.sets figure{flex:none}
+.sets .frame{overflow:hidden;cursor:zoom-in}
+.sets img{height:340px;width:auto;transition:scale .9s var(--settle)}
+@media (hover:hover){.sets .frame:hover img{scale:1.06}}
+.sets figcaption{margin-top:8px}
+
+/* 6b the spaces: staggered photos, KOBU-style; the photo leads, one detail line, Book on the right */
+.kb{padding-block:120px 112px}
+.kb__grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:var(--gap);row-gap:64px;padding-inline:var(--pad);align-items:start}
+.kb__head{grid-column:1/5}
+.kb__head p:last-child{margin-top:16px;max-width:34ch;color:var(--mute)}
+.kb__card{margin:0;min-width:0}
+.kb__ph{position:relative;cursor:zoom-in}
+.kb__code{position:absolute;top:12px;left:12px;display:inline-flex;align-items:center;gap:6px;font-size:11px;line-height:1;letter-spacing:.08em;text-transform:uppercase;color:var(--on-dark);border:1px solid rgba(247,243,237,.75);border-radius:3px;padding:5px 8px 4px;pointer-events:none;background:rgba(27,36,20,.32);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.kb__code::before{content:"";width:4px;height:4px;border-radius:50%;background:currentColor}
+.kb__cap{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 16px;margin-top:12px;align-items:baseline}
+.kb__name{font-size:17px;text-align:left;justify-self:start;transition:opacity .2s}
+.kb__name:hover{opacity:.6}
+.kb__book{grid-column:2;grid-row:1;font-size:12px;letter-spacing:.08em;text-transform:uppercase;border-bottom:1px solid currentColor;padding-bottom:1px}
+.kb__book:hover{opacity:.6}
+.kb__meta{grid-column:1/-1;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
+.kb__foot{grid-column:1/-1;display:flex;justify-content:space-between;align-items:baseline;gap:24px;flex-wrap:wrap;margin-top:24px;padding-top:18px;border-top:1px solid var(--line)}
+.kb__foot p{max-width:56ch;font-size:15px}
+.kb__all{font-size:17px;white-space:nowrap}
+.kb__all:hover{opacity:.6}
+
+/* 7 #shotatElmuse: endless wall of prints */
+.wall{position:relative;height:min(100svh,940px);min-height:620px;background:var(--dark);color:var(--on-dark);overflow:hidden;cursor:grab;touch-action:pan-y;-webkit-user-select:none;user-select:none;outline-offset:-4px}
+.wall.is-dragging{cursor:grabbing}
+.wall__plane{position:absolute;inset:0}
+.wall::after{content:"";position:absolute;inset:auto 0 0 0;height:140px;background:linear-gradient(to top,rgba(24,33,15,.92),transparent);pointer-events:none;z-index:1}
+.tile{position:absolute;left:0;top:0;will-change:transform}
+.tile__in{background:var(--ground);padding:8px 8px 28px;box-shadow:0 2px 2px rgba(0,0,0,.18),0 18px 36px rgba(0,0,0,.38);transform:rotate(var(--r));transition:transform .45s var(--settle),box-shadow .45s}
+@media (hover:hover){.tile:hover .tile__in{transform:rotate(0deg) scale(1.06);box-shadow:0 2px 2px rgba(0,0,0,.18),0 28px 56px rgba(0,0,0,.5)}}
+.tile img{width:100%;height:auto;aspect-ratio:var(--ar);object-fit:cover;background:var(--tc,var(--missing));pointer-events:none;-webkit-user-drag:none}
+.tile figcaption{position:absolute;left:10px;right:10px;bottom:8px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wall__veil{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 30% 30% at 50% 55%,rgba(24,33,15,.96),rgba(24,33,15,.88) 55%,transparent 100%)}
+.wall__title{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none;z-index:2;width:max-content;max-width:calc(100% - 32px)}
+.wall__title .l{color:var(--mute-dark)}
+.wall__title .h{margin-top:8px}
+.wall__hint{position:absolute;left:var(--pad);bottom:24px;z-index:2;color:var(--mute-dark);pointer-events:none}
+.wall__ig{position:absolute;right:var(--pad);bottom:22px;z-index:2}
+/* the wall starts as a small window and opens to the full screen as you scroll */
+.wall-run{position:relative;height:230vh;background:var(--ground)}
+.wall-run .wall{position:sticky;top:0;height:100vh;height:100svh;min-height:0;clip-path:inset(var(--wy,8%) var(--wx,8%) round var(--wr,28px));will-change:clip-path}
+.wall__hint,.wall__ig{opacity:var(--wo,0);transition:opacity .4s}
+/* a handle that says you can drag, until you do */
+.wall__drag{position:absolute;left:50%;top:calc(50% + 74px);transform:translateX(-50%);z-index:2;display:flex;flex-direction:column;align-items:center;gap:10px;pointer-events:none;transition:opacity .5s}
+.wall__knob{width:68px;height:68px;border-radius:50%;background:var(--ground);color:var(--green);display:grid;place-items:center;box-shadow:0 10px 30px rgba(0,0,0,.35);animation:knob 2.2s ease-in-out infinite}
+.wall__knob svg{width:30px;height:14px}
+.wall__drag .l{color:var(--on-dark)}
+@keyframes knob{0%,100%{translate:-12px 0}50%{translate:12px 0}}
+.wall.has-dragged .wall__drag{opacity:0}
+.wall__title,.wall__veil{transition:opacity .45s}
+.wall.is-busy .wall__title,.wall.is-busy .wall__veil{opacity:0}
+
+/* 8 words */
+.words{padding-block:112px}
+.words blockquote{font-size:16px}
+.words blockquote .tag{margin-bottom:16px}
+.meta__d{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.lab--tag{display:grid;gap:10px;justify-items:start;align-content:start}
+.words cite{display:block;font-style:normal;margin-top:16px}
+
+/* 9 ending */
+.end{padding-block:112px 32px}
+.rows{margin:48px var(--pad) 0;border-top:1px solid var(--line)}
+.row{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:var(--gap);padding-block:16px;border-bottom:1px solid var(--line)}
+.row > :first-child{grid-column:1/4}
+.row > :last-child{grid-column:4/10;justify-self:start;display:flex;gap:24px;flex-wrap:wrap}
+.end .base{margin-top:80px}
+.end .base p:last-child{grid-column:7/13;justify-self:end}
+.end .base p:first-child{grid-column:1/7}
+
+/* cursor label over images (mouse only) */
+.cursor{position:fixed;left:0;top:0;z-index:60;width:84px;height:84px;margin:-42px 0 0 -42px;border-radius:50%;display:grid;place-items:center;background:var(--ground);color:var(--ink);pointer-events:none;scale:0;transition:scale .35s var(--settle)}
+.cursor.is-on{scale:1}
+/* the circle stands in for the pointer, so the arrow never sits on its label */
+html.cur-on,html.cur-on *{cursor:none !important}
+
+
+/* full-screen viewer: stays on the cream ground, info panel on the left */
+.lb{position:fixed;inset:0;z-index:80;background:var(--ground);color:var(--ink);display:grid;grid-template-columns:minmax(260px,320px) minmax(0,1fr);opacity:0;transition:opacity .35s}
+.lb.is-open{opacity:1}
+.lb[hidden]{display:none}
+.lb__side{display:flex;flex-direction:column;justify-content:space-between;gap:24px;padding:24px var(--pad);border-right:1px solid var(--line);min-width:0}
+.lb__close{justify-self:start;align-self:flex-start}
+.lb__info{display:grid;gap:14px;justify-items:start}
+.lb__title{font-family:var(--h);font-weight:400;font-size:24px;line-height:1.05;text-transform:uppercase;letter-spacing:.01em}
+.lb__foot{display:grid;gap:14px}
+.lb__nav{display:flex;gap:24px}
+.lb__main{display:grid;grid-template-rows:minmax(0,1fr) auto;min-width:0;min-height:0;padding:24px var(--pad) 18px}
+.lb__stage{display:grid;place-items:center;min-height:0;touch-action:pan-y}
+.lb__stage img{max-width:100%;max-height:calc(100vh - 140px);max-height:calc(100svh - 140px);object-fit:contain;scale:.97;opacity:0;transition:scale .5s var(--settle),opacity .35s}
+.lb__stage img.is-shown{scale:1;opacity:1}
+.lb__thumbs{display:flex;gap:6px;overflow-x:auto;padding:14px 2px 2px;scrollbar-width:none;justify-content:safe center}
+.lb__thumbs::-webkit-scrollbar{display:none}
+.lb__thumbs button{flex:none;width:52px;height:52px;padding:0;background:var(--tc,var(--missing));opacity:.45;transition:opacity .2s;overflow:hidden}
+.lb__thumbs button:hover{opacity:.8}
+.lb__thumbs button.is-on{opacity:1;outline:1px solid var(--ink);outline-offset:2px}
+.lb__thumbs img{width:100%;height:100%;object-fit:cover}
+
+@media (max-width:820px){
+  .kb__grid{row-gap:48px}
+  .kb__head{grid-column:1/-1}
+  .kb__card{grid-column:1/-1 !important;margin-top:0 !important;width:84%}
+  .kb__card:nth-of-type(even){justify-self:end !important}
+  :root{--pad:16px;--gap:12px}
+  .g > *,.pillar > *,.client .meta > *,.row > *{grid-column:1/-1 !important;justify-self:start !important}
+  .g > * + *,.pillar > * + *,.row > * + *{margin-top:12px}
+  .nav__pill a.opt{display:none}
+  .nav__pill a{padding:9px 11px}
+  .hero__cap{flex-direction:column;align-items:flex-start;padding-bottom:28px}
+  .wwd,.work,.how,.words,.end{padding-block:72px}
+  .work__info{gap:16px}
+  .work__player{margin-top:24px}
+  .wk__head .hint{display:none}
+  .wk__track{gap:12px}
+  .wk__col{gap:12px}
+  .wk__quote blockquote{font-size:17px}
+  .work__index{margin-top:24px}
+  .sets img{height:260px}
+  .reel{--w0:26vw}
+  .reel__words{gap:14px}
+  .reel__clips video:not(.is-center){display:none}
+  .end .base p:last-child{justify-self:start !important}
+  .wall__hint{bottom:64px}
+  .wall-run{height:200vh}
+  .step{width:280px}
+  .steps__head .hint{display:none}
+  .lb{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr)}
+  .lb__side{flex-direction:row;flex-wrap:wrap;align-items:center;gap:8px 16px;border-right:0;border-bottom:1px solid var(--line);padding:14px var(--pad)}
+  .lb__info{order:3;width:100%}
+  .lb__title,.lb__tag{display:none}
+  .lb__foot{display:contents}
+  .lb__count{margin-left:auto}
+  .lb__nav{display:none}
+  .lb__stage img{max-height:calc(100svh - 250px)}
+  .ch__ui{inset:0;align-content:space-between;padding-top:84px;padding-bottom:84px}
+  .ch__ui > * + *{margin-top:0}
+  .ch__texts{min-height:52vh;min-height:52svh}
+  .ch__texts{justify-self:stretch !important;min-height:0;flex:1}
+  .ch__media{left:0;bottom:56%}
+  .chapters .ch__ui{inset:44% 0 0 0 !important;width:auto;padding:22px var(--pad) 44px !important;gap:12px}
+  .ch__index{display:none !important}
+  .ch__list li{padding:8px 0;font-size:15px}
+  .ch__text{gap:12px}
+  .ch__ticks{bottom:18px}
+  .ch__text{inset:0 0 auto 0}
+  .ch__ticks{left:var(--pad);right:auto;bottom:40px}
+  .sunlit::before{width:150vw}
+  .walk__bottom > *{grid-column:1/-1 !important}
+  .walk__act{justify-self:start !important;justify-items:start}
+  .walk__top p:last-child{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  .media img,.media.is-in img{scale:1;clip-path:none;transition:none;translate:none !important}
+  .hero__media img{animation:none;scale:1;translate:none !important}
+  .studio .wide{clip-path:none !important}
+  .studio .wide img{scale:1;translate:none !important}
+  .reel{height:auto}
+  .reel__stage{position:relative;height:auto}
+  .reel__window{position:relative;clip-path:none;height:85vh}
+  .reel__clips{transform:none}
+  .reel__words{display:none}
+  .reel__foot{opacity:1}
+  .tile__in,.lb,.lb__stage img{transition:none}
+  .wwd__say .w{color:var(--ink)}
+  .wwd__card,.wwd__card.is-out{transition:none}
+  .wk{height:auto !important}
+  .wk__stage{position:relative;height:auto;padding-block:96px}
+  .wk__track{transform:none !important;overflow-x:auto;width:auto}
+  .wk__tile img{clip-path:none;scale:1;transition:none}
+  html.js .rise,html.js .hero__cap > *{opacity:1;translate:none;transition:none}
+  html.js .ruled::before{transform:none}
+  .work__img{animation:none}
+  .ph-in,.hero__media img.ph-in{animation:none}
+  .ch__img img{scale:1}
+  .ch__text{transition:none}
+  .sunlit::before{animation:none}
+  .wall-run{height:auto}
+  .wall-run .wall{position:relative;clip-path:none !important}
+  .wall__hint,.wall__ig{opacity:1}
+  .wall__knob{animation:none}
+  .walk__sun{display:none}
+  .walk__f{scale:1 !important}
+  .walk__lit,.walk__station,.walk__hold,.walk__book{transition:none}
+  .walk__ring::before{animation:none}
+}
+:root{--paper:#FBF8F2;--sig:"Mrs Saint Delafield","Snell Roundhand",cursive;--type:"Special Elite","American Typewriter","Courier New",monospace}
+/* ending: write us a postcard; send folds it into a paper plane */
+.pcx{position:relative;padding:72px var(--pad) 0;overflow-x:clip}
+.pcx__stage{position:relative;display:grid;place-items:center;min-height:min(720px,80vw)}
+.pcx__fly{width:min(1080px,100%);filter:drop-shadow(0 30px 30px rgba(40,34,20,.16)) drop-shadow(0 8px 10px rgba(40,34,20,.1))}
+.pc__card{position:relative;background:var(--paper);aspect-ratio:3/2;display:grid;grid-template-columns:44% 1fr;rotate:-1.4deg;transition:rotate .8s var(--settle)}
+.pcx:hover .pc__card,.pcx:focus-within .pc__card{rotate:0deg}
+.pc__face{display:contents}
+
+/* front: their photo or ours */
+.pc__photo{position:relative;overflow:hidden;margin:18px 0 18px 18px;background:var(--wait)}
+.pc__photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform 1s var(--settle),opacity .4s}
+.pc__photo:hover img{transform:scale(1.02)}
+.pc__photo.is-drop img{opacity:.5}
+.pc__cap{position:absolute;left:12px;bottom:10px;color:#fff;opacity:.85;pointer-events:none}
+.pc__add{position:absolute;left:12px;top:12px;display:inline-flex;gap:6px;align-items:center;padding:7px 11px 6px;background:rgba(251,248,242,.9);color:var(--ink);backdrop-filter:blur(6px);transition:background .25s}
+.pc__add:hover{background:var(--paper)}
+.pc__tools{position:absolute;left:12px;top:12px;display:flex;gap:6px;flex-wrap:wrap}
+.pc__tools .pc__add,.pc__shoot .pc__add{position:static}
+/* camera: the frame becomes a viewfinder */
+.pc__cam{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1);opacity:0;pointer-events:none;transition:opacity .4s}
+.pc__photo.is-cam .pc__cam{opacity:1}
+.pc__photo.is-cam img,.pc__photo.is-cam .pc__tools,.pc__photo.is-cam .pc__cap{opacity:0;pointer-events:none}
+.pc__photo.is-cam::after{content:"";position:absolute;inset:14px;pointer-events:none;
+  background:linear-gradient(#fff,#fff) 0 0/22px 1.5px,linear-gradient(#fff,#fff) 0 0/1.5px 22px,linear-gradient(#fff,#fff) 100% 0/22px 1.5px,linear-gradient(#fff,#fff) 100% 0/1.5px 22px,linear-gradient(#fff,#fff) 0 100%/22px 1.5px,linear-gradient(#fff,#fff) 0 100%/1.5px 22px,linear-gradient(#fff,#fff) 100% 100%/22px 1.5px,linear-gradient(#fff,#fff) 100% 100%/1.5px 22px;background-repeat:no-repeat;opacity:.85}
+.pc__shoot{position:absolute;left:0;right:0;bottom:18px;display:none;justify-content:center;align-items:center;z-index:2}
+.pc__photo.is-cam .pc__shoot{display:flex}
+.pc__cancel{position:absolute !important;left:12px;bottom:14px}
+.pc__shutter{width:62px;height:62px;border-radius:50%;border:3px solid rgba(255,255,255,.95);display:grid;place-items:center;transition:transform .2s}
+.pc__shutter i{width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.95);transition:transform .15s}
+.pc__shutter:hover i{transform:scale(.92)}
+.pc__shutter:active i{transform:scale(.8)}
+.pc__count{position:absolute;left:50%;top:-50%;translate:-50% -100%;font-family:var(--h);font-size:64px;color:#fff;text-shadow:0 2px 20px rgba(0,0,0,.3);pointer-events:none}
+.pc__flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:3}
+.pc__photo.is-dev img{animation:develop 2.2s cubic-bezier(.3,.1,.3,1) both}
+@keyframes develop{0%{filter:brightness(1.9) saturate(0) contrast(.6) blur(2px)}35%{filter:brightness(1.4) saturate(.3) contrast(.8) blur(.5px)}100%{filter:none}}
+.pc__note-cam{position:absolute;left:12px;right:12px;top:52px;padding:8px 10px;background:rgba(251,248,242,.94);font-size:13px;line-height:1.4}
+.pc__photo input{position:absolute;width:1px;height:1px;opacity:0}
+
+/* back: a note, a signature, the address */
+.pc__back{position:relative;padding:30px 30px 26px 34px;display:grid;grid-template-columns:1.35fr 1px 1fr;gap:0 24px;min-width:0}
+.pc__msg{display:flex;flex-direction:column;min-width:0}
+.pc__msg .h{font-size:clamp(18px,1.6vw,24px);margin-top:6px}
+.pc__note{display:block;width:100%;margin-top:14px;resize:none;font-family:var(--type);font-size:15.5px;line-height:32px;letter-spacing:.01em;color:#26241F;text-shadow:0 0 .6px rgba(38,36,31,.55);caret-color:#26241F;height:calc(32px * 4 + 2px);
+  background:repeating-linear-gradient(transparent 0 31px,var(--line) 31px 32px);outline:none}
+.pc__note::placeholder{color:rgba(38,36,31,.38);text-shadow:none}
+.pc__sign{position:relative;margin-top:10px;height:58px;border-bottom:1px solid var(--line);display:flex;align-items:flex-end}
+.pc__sign .l{position:absolute;left:0;bottom:-20px;color:var(--mute)}
+.pc__name,.pc__ink{font-family:var(--sig);font-size:40px;line-height:58px;height:58px;white-space:nowrap;padding:0 4px 0 22px}
+.pc__name{position:relative;z-index:1;width:100%;color:transparent;caret-color:var(--green);outline:none}
+.pc__name::placeholder{color:rgba(43,61,33,.28)}
+.pc__ink{position:absolute;left:0;bottom:-6px;color:#1F2F5A;pointer-events:none}
+.pc__x{position:absolute;left:2px;bottom:12px;font-size:15px;color:var(--mute)}
+.pc__go{margin-top:auto;display:flex;align-items:baseline;gap:18px;flex-wrap:wrap;padding-top:30px}
+.pc__send{font-size:17px;border-bottom:1px solid currentColor;padding-bottom:3px}
+.pc__send i{font-style:normal;display:inline-block;transition:transform .3s var(--settle)}
+.pc__send:hover i{transform:translate(3px,-3px)}
+.pc__go a{font-size:15px}
+.pc__rule{background:var(--line)}
+.pc__to{display:flex;flex-direction:column;justify-content:flex-end;min-width:0}
+.pc__line{border-bottom:1px solid var(--line);padding:9px 0 4px;font-size:15px}
+.pc__line .l{display:block;margin-bottom:2px}
+.pc__stamp{position:absolute;right:30px;top:28px;width:80px;height:96px;padding:5px;background:var(--paper);box-shadow:0 0 0 1px var(--line),0 2px 6px rgba(40,34,20,.12);outline:3px dotted var(--paper);outline-offset:-1px;rotate:3deg}
+.pc__stamp div{height:100%;background:url("img/2AUYz.jpg") center/cover;display:grid;place-items:end center;padding-bottom:6px;color:#fff;font-family:var(--h);font-size:12px;letter-spacing:.06em}
+.pc__post{position:absolute;right:86px;top:60px;width:92px;height:92px;border:1.5px solid rgba(43,61,33,.5);border-radius:50%;display:grid;place-items:center;text-align:center;color:rgba(43,61,33,.7);font-size:9px;letter-spacing:.14em;line-height:1.5;rotate:-14deg;pointer-events:none}
+
+/* the big postmark that lands on send */
+.pc__sent{position:absolute;right:16%;top:22%;width:190px;height:190px;border:3px solid rgba(168,38,30,.9);border-radius:50%;display:grid;place-items:center;text-align:center;color:rgba(168,38,30,.95);font-size:12px;letter-spacing:.18em;line-height:1.7;rotate:-16deg;opacity:0;pointer-events:none;mix-blend-mode:multiply;filter:url(#rough)}
+.pc__sent b{display:block;font-family:var(--h);font-weight:400;font-size:30px;letter-spacing:.06em;line-height:1.1}
+.pc__sent::before,.pc__sent::after{content:"";position:absolute;top:58px;width:150px;height:62px;background:repeating-linear-gradient(transparent 0 10px,rgba(168,38,30,.9) 10px 13px)}
+.pc__sent::before{right:178px}.pc__sent::after{left:178px}
+
+/* the paper-plane fold shading */
+.pc__fold{position:absolute;inset:0;background:linear-gradient(160deg,rgba(40,34,20,.06),rgba(40,34,20,.22));clip-path:polygon(0% 12%,100% 47%,38% 60%,16% 96%);opacity:0;pointer-events:none}
+.pcx__trail{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.pcx__trail path{fill:none;stroke:rgba(43,61,33,.35);stroke-width:1.5;stroke-dasharray:6 8}
+
+.pcx__toast{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:28px;min-height:26px;font-size:15px;text-align:center}
+.pcx__toast[hidden]{display:flex;visibility:hidden}
+.pcx__toast.is-in{animation:toast .6s var(--settle) both}
+@keyframes toast{from{opacity:0;translate:0 8px}}
+.pc__wiggle{animation:wig .4s}
+@keyframes wig{25%{translate:-5px 0}75%{translate:5px 0}}
+
+.pcx .miss{background:var(--missing);color:var(--mute);padding:0 6px}
+.pcx button,.pcx input,.pcx textarea{font:inherit;color:inherit;background:none;border:0}
+.pc__base{display:flex;justify-content:space-between;gap:16px;margin:64px var(--pad) 0;padding:20px 0 24px;border-top:1px solid var(--line)}
+@media (max-width:760px){
+  .pcx{padding-top:56px}
+  .pcx__stage{min-height:0}
+  .pc__card{aspect-ratio:auto;grid-template-columns:1fr;rotate:-1deg}
+  .pc__photo{margin:12px 12px 0;aspect-ratio:4/3}
+  .pc__back{grid-template-columns:1fr;padding:22px 18px}.pc__rule{display:none}
+  .pc__to{margin-top:24px}
+  .pc__stamp{top:-62px;right:20px;width:62px;height:76px}.pc__post{display:none}
+  .pc__sent{width:150px;height:150px;right:10%;top:30%}.pc__sent b{font-size:24px}
+  .pc__base{flex-direction:column;gap:4px}
+}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Mrs+Saint+Delafield&family=Special+Elite&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<header class="nav on-dark" id="nav">
+  <a class="wm" href="#top" aria-label="Elmuse home">elmuse°</a>
+  <nav class="nav__pill" aria-label="Primary"><a class="opt" href="#what">Services</a><a href="#work">Work</a><a href="#studio">Studio</a><a class="nav__cta" href="#contact">Let's talk</a></nav>
+</header>
+
+<main id="top">
+
+  <!-- 1 hero: one image, one line, the whole viewport -->
+  <section class="hero" id="hero" aria-label="Introduction">
+    <div class="hero__media" data-p="spaces"><img src="img/2AUYz.jpg" alt="The Elmuse studio floor in afternoon light"></div>
+    <div class="hero__shade" aria-hidden="true"></div>
+    <div class="hero__cap">
+      <h1 class="h">You bring the spark.<br>We build brands, spaces &amp; experiences.</h1>
+      <div class="ctas"><a class="cta cta--light" href="https://wa.me/919352187963?text=Hi%20Elmuse!%20I%20have%20an%20idea%20I%27d%20love%20to%20co-create%3A%20" target="_blank" rel="noopener">Start a project <span class="cta__arr" aria-hidden="true">→</span></a><a class="cta cta--ghost" href="https://wa.me/919352187963?text=Hi!%20I%27d%20like%20to%20book%20Elmuse%20Studio%20for..." target="_blank" rel="noopener">Book the studio <span class="cta__arr" aria-hidden="true">→</span></a></div>
+    </div>
+  </section>
+
+  <!-- 2 what we do: short intro on cream, then three pinned full-screen chapters -->
+  <section class="wwd sunlit" id="what" aria-label="What we do">
+    <div class="wwd__inner">
+      <p class="l mute">What we do</p>
+      <div class="wwd__stackwrap"><button class="wwd__stack" type="button" data-cursor="Next" aria-label="Photos from Elmuse shoots. Press to see the next one."><figure class="wwd__card"><img src="img/prod/t_AYEQO.jpg" alt="" draggable="false"></figure><figure class="wwd__card"><img src="img/prod/t_Az7kW.jpg" alt="" draggable="false"></figure><figure class="wwd__card"><img src="img/prod/t_jY55r.jpg" alt="" draggable="false" loading="lazy"></figure><figure class="wwd__card"><img src="img/prod/t_3Hu5H.jpg" alt="" draggable="false" loading="lazy"></figure><figure class="wwd__card"><img src="img/prod/t_TgWmT.jpg" alt="" draggable="false" loading="lazy"></figure><figure class="wwd__card"><img src="img/prod/t_c665B.jpg" alt="" draggable="false" loading="lazy"></figure><figure class="wwd__card"><img src="img/prod/t_IAAZB.jpg" alt="" draggable="false" loading="lazy"></figure></button><p class="l mute wwd__count" aria-live="polite">01 / 07 · Tap the stack</p></div>
+      <p class="h wwd__say">A creative studio in Jaipur. Strategy, sets and camera under one roof, so the idea you approve is the idea that gets made.</p>
+    </div>
+  </section>
+
+  <section class="chapters" id="chapters" aria-label="Brands, spaces and experiences">
+    <div class="ch__stage">
+      <div class="ch__media" aria-hidden="true">
+        <figure class="ch__img" data-p="brands"><img src="img/0X9tr.jpg" alt="" style="object-position:50% 26%"></figure>
+        <figure class="ch__img" data-p="spaces"><img src="img/DlmPa.jpg" alt="" loading="lazy"></figure>
+        <figure class="ch__img" data-p="exp"><img src="img/6riNA.jpg" alt="" style="object-position:50% 45%" loading="lazy"></figure>
+      </div>
+      <div class="ch__shade" aria-hidden="true"></div>
+      <div class="ch__ui g">
+        <div class="ch__index lab"><p class="l">What we do</p><p class="l ch__count" aria-hidden="true"><span>01</span> / 03</p></div>
+        <div class="ch__texts c4-9">
+          <article class="ch__text is-on">
+            <span class="tag t-brands">Brands</span>
+            <h2 class="h">Campaigns, films &amp; visual worlds.</h2>
+            <ul class="ch__list"><li>Campaign ideas &amp; creative direction</li><li>Brand films &amp; content</li><li>Fashion, product &amp; lifestyle photography</li><li>Set building, styling &amp; art direction</li></ul>
+            <a class="cta cta--light" href="https://wa.me/919352187963?text=Hi%20Elmuse!%20I%20have%20an%20idea%20I%27d%20love%20to%20co-create%3A%20" target="_blank" rel="noopener">Start a brand project <span class="cta__arr" aria-hidden="true">→</span></a>
+          </article>
+          <article class="ch__text">
+            <span class="tag t-spaces">Spaces</span>
+            <h2 class="h">A sunlit studio, and sets built to brief.</h2>
+            <ul class="ch__list"><li>Studio hire for shoots, films &amp; podcasts</li><li>Sets designed and built to brief</li></ul>
+            <a class="cta cta--light" href="https://wa.me/919352187963?text=Hi!%20I%27d%20like%20to%20book%20Elmuse%20Studio%20for..." target="_blank" rel="noopener">Book the studio <span class="cta__arr" aria-hidden="true">→</span></a>
+          </article>
+          <article class="ch__text">
+            <span class="tag t-exp">Experiences</span>
+            <h2 class="h">Workshops, movement &amp; gatherings.</h2>
+            <ul class="ch__list"><li>Workshops &amp; events</li><li>Dance &amp; movement</li><li>Mindfulness</li><li>Community gatherings</li></ul>
+            <a class="cta cta--light" href="https://www.instagram.com/elmuse.experiences/" target="_blank" rel="noopener">See upcoming experiences <span class="cta__arr" aria-hidden="true">→</span></a>
+          </article>
+        </div>
+      </div>
+      <div class="ch__ticks" aria-hidden="true"><i></i><i></i><i></i></div>
+    </div>
+  </section>
+
+  <!-- 3 work: a pinned story reel of films, photos and clients' own words -->
+  <section class="wk" id="work" aria-label="Work made at Elmuse">
+    <div class="wk__stage">
+      <div class="g wk__head ruled">
+        <p class="l lab rise" style="color:var(--green)">Details worth noticing</p>
+        <p class="wk__line rise" style="--i:1">Fashion, jewellery, product and film, all shot on our floor in Jaipur.</p>
+        <p class="l mute hint rise" style="--i:2">Scroll to see the work →</p>
+      </div>
+      <div class="wk__track">
+        <div class="wk__col c-tall">
+          <div class="wk__tile" data-lb="work" data-cursor="View"><img src="img/prod/AYEQO.jpg" alt="Two models in pink and lavender outfits on the white cyc wall" loading="lazy"><p class="l wk__cap">Fashion · Cyc wall</p></div>
+        </div>
+        <div class="wk__col c-film">
+          <div class="wk__tile wk__film" data-cursor="Pause"><video src="img/reel/clip2.mp4" poster="img/reel/clip2.jpg" muted loop playsinline preload="metadata" aria-label="Behind the scenes of a festive gifting product shoot"></video><p class="l wk__cap">Behind the scenes · Product</p><button class="l link wk__toggle" type="button">Pause</button></div>
+        </div>
+        <div class="wk__col c-split">
+          <div class="wk__quote rise"><blockquote>"If you're looking for the perfect spot to shoot content in Jaipur, Elmuse is honestly a no-brainer."</blockquote><div class="wk__who"><span class="l">Kartik Tiwari</span><span class="mute">Thrillophilia</span></div></div>
+          <div class="wk__tile" data-lb="work" data-cursor="View"><img src="img/prod/Az7kW.jpg" alt="Hands with gold jewellery in low light" loading="lazy"><p class="l wk__cap">Jewellery · Low-key light</p></div>
+        </div>
+        <div class="wk__col c-tall">
+          <div class="wk__tile" data-lb="work" data-cursor="View"><img src="img/prod/jY55r.jpg" alt="A woman in a pale saree seated on a sofa" loading="lazy"><p class="l wk__cap">Saree · Lounge</p></div>
+        </div>
+        <div class="wk__col c-say">
+          <div class="wk__say rise"><blockquote>"Thank you for giving me the studio at the last moment. The whole team loved the vibe throughout the shoot."</blockquote><div class="wk__who"><span class="l">Vanshika Sharma</span><span class="mute">Founder, The Digital Prism</span></div></div>
+        </div>
+        <div class="wk__col c-tall">
+          <div class="wk__tile" data-lb="work" data-cursor="View"><img src="img/prod/3Hu5H.jpg" alt="A man in a black suit against mirrored panels" loading="lazy"><p class="l wk__cap">Menswear</p></div>
+        </div>
+        <div class="wk__col c-split">
+          <div class="wk__tile" data-lb="work" data-cursor="View"><img src="img/prod/BcyND.jpg" alt="A woman and her reflection in a mirror" loading="lazy"><p class="l wk__cap">Beauty · Mirror</p></div>
+          <div class="wk__tile" data-lb="work" data-cursor="View"><img src="img/prod/IAAZB.jpg" alt="A woman holding yellow flowers beside a table" loading="lazy"><p class="l wk__cap">Lifestyle · Florals</p></div>
+        </div>
+        <div class="wk__col c-film">
+          <div class="wk__tile wk__film" data-cursor="Pause"><video src="img/reel/clip1.mp4" poster="img/reel/clip1.jpg" muted loop playsinline preload="metadata" aria-label="Behind the scenes of a fashion shoot on the display wall set"></video><p class="l wk__cap">Behind the scenes · Fashion</p><button class="l link wk__toggle" type="button">Pause</button></div>
+        </div>
+        <div class="wk__col c-tall">
+          <div class="wk__tile" data-lb="work" data-cursor="View"><img src="img/prod/c665B.jpg" alt="A man in ethnic wear adjusting jewellery" loading="lazy"><p class="l wk__cap">Ethnic menswear</p></div>
+        </div>
+        <div class="wk__col c-split">
+          <div class="wk__tile" data-lb="work" data-cursor="View"><img src="img/prod/OxJUB.jpg" alt="Product still life of jars and bottles in warm low light" loading="lazy"><p class="l wk__cap">Product · Still life</p></div>
+          <div class="wk__quote rise"><blockquote>"Loved the place and its vibe. A perfect setting for any kind of shoot."</blockquote><div class="wk__who"><span class="l">Ayushi Kabra</span><span class="mute">Founder, Basera</span></div></div>
+        </div>
+        <div class="wk__col c-tall">
+          <div class="wk__tile" data-lb="work" data-cursor="View"><img src="img/prod/TgWmT.jpg" alt="A woman in a white dress by sheer sunlit curtains" loading="lazy"><p class="l wk__cap">Fashion · Natural light</p></div>
+        </div>
+        <div class="wk__col c-film">
+          <div class="wk__tile wk__film" data-cursor="Pause"><video src="img/reel/clip3.mp4" poster="img/reel/clip3.jpg" muted loop playsinline preload="metadata" aria-label="Behind the scenes of a shoot in the lounge set"></video><p class="l wk__cap">Behind the scenes · Lounge</p><button class="l link wk__toggle" type="button">Pause</button></div>
+        </div>
+        <div class="wk__col c-end">
+          <div class="wk__end rise"><p class="h">Your idea, on our floor.</p><p class="acts"><a class="cta cta--light" href="https://wa.me/919352187963?text=Hi%20Elmuse!%20I%20have%20an%20idea%20I%27d%20love%20to%20make%3A%20" target="_blank" rel="noopener">Start a project <span class="cta__arr" aria-hidden="true">→</span></a><a class="cta cta--ghost" href="https://wa.me/919352187963?text=Hi!%20I%27d%20like%20to%20book%20Elmuse%20Studio%20for..." target="_blank" rel="noopener">Book the studio <span class="cta__arr" aria-hidden="true">→</span></a></p></div>
+        </div>
+      <div class="wk__foot"><div class="wk__bar" aria-hidden="true"><i></i></div></div>
+    </div>
+  </section>
+
+  <!-- 4 reel -->
+  <section class="reel" id="reel" aria-label="Behind-the-scenes reel">
+    <div class="reel__stage">
+      <div class="reel__window">
+        <div class="reel__clips">
+          <video src="img/reel/clip1.mp4" poster="img/reel/clip1.jpg" muted loop playsinline preload="metadata" aria-hidden="true"></video>
+          <video class="is-center" src="img/reel/clip2.mp4" poster="img/reel/clip2.jpg" muted loop playsinline preload="metadata"></video>
+          <video src="img/reel/clip3.mp4" poster="img/reel/clip3.jpg" muted loop playsinline preload="metadata" aria-hidden="true"></video>
+        </div>
+      </div>
+      <div class="reel__words" aria-hidden="true"><span class="h">Play</span><span class="reel__gap"></span><span class="h">Reel</span></div>
+      <div class="reel__foot"><p class="l">Behind the scenes at Elmuse</p><button class="link l reel__toggle" type="button" aria-pressed="false">Pause</button></div>
+    </div>
+  </section>
+
+  <!-- 5 how we work: one statement with a photo inside it, then the process as a strip -->
+  <section class="how sunlit" id="how" aria-label="How we work">
+    <div class="g how__head ruled">
+      <p class="lab l">How we work</p>
+      <h2 class="h">Bridging the gap <span class="inl" data-p="brands" aria-hidden="true"><img src="img/t/F8Umq.jpg" alt=""></span> between ideas and execution.</h2>
+      <p class="how__lede">One team for strategy, sets, shoot and edit. <span class="mute">300+ shoots, 1,800 studio hours and 110+ brands in two years.</span></p>
+      <div class="ctas how__cta"><a class="cta" href="https://wa.me/919352187963?text=Hi%20Elmuse!%20I%20have%20an%20idea%20I%27d%20love%20to%20co-create%3A%20" target="_blank" rel="noopener">Tell us your idea <span class="cta__arr" aria-hidden="true">→</span></a></div>
+    </div>
+
+    <div class="g steps__head"><p class="l lab">The muse process</p><p class="l mute hint">Drag sideways</p></div>
+    <div class="steps drag" tabindex="0" data-cursor="Drag" aria-label="The muse process, five steps, scroll sideways">
+      <article class="step">
+        <p class="l mute">01 / 05</p>
+        <div class="media step__img" data-p="brands" data-lb="how" data-cursor="View"><img src="img/O2rLN.jpg" alt="Step 1: a wavy mirror and warm lamps, a moment of inspiration" loading="lazy" draggable="false"></div>
+        <h3>It all starts with a spark.</h3>
+        <p class="mute">An idea, an inspiration or a vision of something bigger.</p>
+      </article>
+      <article class="step">
+        <p class="l mute">02 / 05</p>
+        <div class="media step__img" data-p="brands" data-lb="how" data-cursor="View"><img src="img/6RCSx.jpg" alt="Step 2: a close study of textures and objects" loading="lazy" draggable="false"></div>
+        <h3>Diving deeper.</h3>
+        <p class="mute">Research, a lot of questions, and the idea worth building around.</p>
+      </article>
+      <article class="step">
+        <p class="l mute">03 / 05</p>
+        <div class="media step__img" data-p="brands" data-lb="how" data-cursor="View"><img src="img/uxp6U.jpg" alt="Step 3: sketching at an easel in the studio" loading="lazy" draggable="false"></div>
+        <h3>To the whiteboard.</h3>
+        <p class="mute">Strategy, story and creative direction, settled before the shoot.</p>
+      </article>
+      <article class="step">
+        <p class="l mute">04 / 05</p>
+        <div class="media step__img" data-p="brands" data-lb="how" data-cursor="View"><img src="img/zWXJJ.jpg" alt="Step 4: lights and camera set up on the cyc wall" loading="lazy" draggable="false"></div>
+        <h3>Make things happen.</h3>
+        <p class="mute">End-to-end production with sets and styling, in our studio or on location.</p>
+      </article>
+      <article class="step">
+        <p class="l mute">05 / 05</p>
+        <div class="media step__img" data-p="brands" data-lb="how" data-cursor="View"><img src="img/0X9tr.jpg" alt="Step 5: the finished campaign on red paper" loading="lazy" draggable="false"></div>
+        <h3>Building the world.</h3>
+        <p class="mute">Every format you need, with launch and social support.</p>
+      </article>
+    </div>
+
+    <div class="g how__clients"><p class="l lab">Made for</p><p>Lakmé<span class="sep">·</span>GAP<span class="sep">·</span>Axis Bank<span class="sep">·</span>Myntra<span class="sep">·</span>Vaseline<span class="sep">·</span>Thrillophilia</p></div>
+  </section>
+
+  <!-- 6 studio -->
+  <section class="walk" id="studio" aria-label="Walk through the studio, from morning to evening">
+    <div class="walk__stage">
+      <div class="walk__frames" aria-hidden="true">
+          <img class="walk__f is-first" src="img/4ZkYo.jpg" alt="" data-num="Entrance" data-name="Doors open" decoding="async">
+          <img class="walk__f" src="img/mx6gy.jpg" alt="" data-num="The floor" data-name="3,500 sq ft, sunlit" decoding="async">
+          <img class="walk__f" src="img/Gou73.jpg" alt="" data-num="Set 001" data-name="Display wall" decoding="async">
+          <img class="walk__f" src="img/bQhAQ.jpg" alt="" data-num="Set 002" data-name="Boho corner" decoding="async">
+          <img class="walk__f" src="img/bIdhE.jpg" alt="" data-num="Set 003" data-name="Lounge" decoding="async">
+          <img class="walk__f" src="img/WFVYJ.jpg" alt="" data-num="Set 004" data-name="Earth gradient" decoding="async">
+          <img class="walk__f" src="img/F4GWV.jpg" alt="" data-num="Cyc wall" data-name="20 × 15.5 ft, 10 ft high" decoding="async">
+          <img class="walk__f" src="img/uxp6U.jpg" alt="" data-num="Set 005" data-name="Classic panels" decoding="async">
+          <img class="walk__f" src="img/WsIj5.jpg" alt="" data-num="Podcast" data-name="Conversation corner" decoding="async">
+          <img class="walk__f" src="img/5p9bW.jpg" alt="" data-num="Set 006" data-name="Credenza chic" decoding="async">
+      </div>
+      <img class="walk__lit" src="img/zWXJJ.jpg" alt="" aria-hidden="true" loading="lazy">
+      <div class="walk__tint" aria-hidden="true"></div>
+      <div class="walk__sun" aria-hidden="true"></div>
+      <div class="walk__shade" aria-hidden="true"></div>
+      <!-- the one action in the walk sits dead centre: hold for the lights, then book -->
+      <div class="walk__center">
+        <button class="walk__hold l" type="button" aria-label="Press and hold to switch on the studio lights">
+          <span class="walk__ring"><svg viewBox="0 0 88 88" aria-hidden="true"><circle class="track" cx="44" cy="44" r="42"/><circle class="fill" cx="44" cy="44" r="42"/></svg></span>
+          <span>Hold to switch on the lights</span>
+        </button>
+        <a class="cta cta--light walk__book" href="https://wa.me/919352187963?text=Hi!%20I%27d%20like%20to%20book%20Elmuse%20Studio%20for..." target="_blank" rel="noopener">Book the studio <span class="cta__arr" aria-hidden="true">→</span></a>
+      </div>
+      <div class="walk__ui">
+        <div class="walk__top"><p class="l">The studio · Walk through</p><p class="l">Scroll to walk the floor</p></div>
+        <div></div>
+        <div class="g walk__bottom">
+          <div class="lab"><p class="h walk__clock" aria-live="off">09:00</p><p class="l walk__light">Morning light</p></div>
+          <div class="c4-8 walk__station"><p class="l walk__num">Entrance</p><p class="walk__name">Doors open</p></div>
+        </div>
+        <div class="walk__bar" aria-hidden="true"><b></b><i style="left:0.000%"></i><i style="left:11.111%"></i><i style="left:22.222%"></i><i style="left:33.333%"></i><i style="left:44.444%"></i><i style="left:55.556%"></i><i style="left:66.667%"></i><i style="left:77.778%"></i><i style="left:88.889%"></i><i style="left:100.000%"></i></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6b studio: the spaces as photos, staggered; name, one detail, Book -->
+  <section class="kb sunlit" aria-label="The spaces you can book">
+    <div class="kb__grid">
+      <div class="kb__head">
+        <p class="l mute">The studio</p>
+        <h2 class="h" style="margin-top:10px">Spaces to shoot in</h2>
+        <p>3,500 sq ft of sunlit, modular space in Jaipur, bookable by the hour. Pick a space and send us a note.</p>
+      </div>
+      <figure class="kb__card" style="grid-column:7 / 12;margin-top:0">
+        <div class="kb__ph media" data-p="spaces" data-lb="studio" data-cursor="View"><img src="img/F4GWV.jpg" alt="The white cyc wall with lights and stands" loading="lazy" draggable="false"><span class="kb__code" aria-hidden="true">Cyc wall</span></div>
+        <figcaption class="kb__cap">
+          <button class="kb__name" type="button">The cyc wall ↗</button>
+          <a class="kb__book" href="https://wa.me/919352187963?text=Hi%20Elmuse%21%20I%27d%20like%20to%20book%20the%20cyc%20wall%20at%20the%20studio." target="_blank" rel="noopener" aria-label="Book The cyc wall on WhatsApp">Book</a>
+          <span class="kb__meta">20 × 15.5 ft · 10 ft high</span>
+        </figcaption>
+      </figure>
+      <figure class="kb__card" style="grid-column:2 / 5;margin-top:-40px">
+        <div class="kb__ph media" data-p="spaces" data-lb="studio" data-cursor="View"><img src="img/bQhAQ.jpg" alt="Set 002, the boho corner, a portrait in window light" loading="lazy" draggable="false"><span class="kb__code" aria-hidden="true">Set 002</span></div>
+        <figcaption class="kb__cap">
+          <button class="kb__name" type="button">Boho corner ↗</button>
+          <a class="kb__book" href="https://wa.me/919352187963?text=Hi%20Elmuse%21%20I%27d%20like%20to%20book%20the%20Boho%20corner%20at%20the%20studio." target="_blank" rel="noopener" aria-label="Book Boho corner on WhatsApp">Book</a>
+          <span class="kb__meta">Window light · Portraits</span>
+        </figcaption>
+      </figure>
+      <figure class="kb__card" style="grid-column:8 / 11;margin-top:140px">
+        <div class="kb__ph media" data-p="spaces" data-lb="studio" data-cursor="View"><img src="img/WFVYJ.jpg" alt="Set 004, the earth gradient backdrop" loading="lazy" draggable="false"><span class="kb__code" aria-hidden="true">Set 004</span></div>
+        <figcaption class="kb__cap">
+          <button class="kb__name" type="button">Earth gradient ↗</button>
+          <a class="kb__book" href="https://wa.me/919352187963?text=Hi%20Elmuse%21%20I%27d%20like%20to%20book%20the%20Earth%20gradient%20at%20the%20studio." target="_blank" rel="noopener" aria-label="Book Earth gradient on WhatsApp">Book</a>
+          <span class="kb__meta">Painted backdrop · Fashion</span>
+        </figcaption>
+      </figure>
+      <figure class="kb__card" style="grid-column:3 / 8;margin-top:-20px">
+        <div class="kb__ph media" data-p="spaces" data-lb="studio" data-cursor="View"><img src="img/bIdhE.jpg" alt="Set 003, the lounge with sofas and paper lamps" loading="lazy" draggable="false"><span class="kb__code" aria-hidden="true">Set 003</span></div>
+        <figcaption class="kb__cap">
+          <button class="kb__name" type="button">Lounge ↗</button>
+          <a class="kb__book" href="https://wa.me/919352187963?text=Hi%20Elmuse%21%20I%27d%20like%20to%20book%20the%20Lounge%20at%20the%20studio." target="_blank" rel="noopener" aria-label="Book Lounge on WhatsApp">Book</a>
+          <span class="kb__meta">Sofas and lamps · Lifestyle</span>
+        </figcaption>
+      </figure>
+      <figure class="kb__card" style="grid-column:9 / 13;margin-top:200px">
+        <div class="kb__ph media" data-p="spaces" data-lb="studio" data-cursor="View"><img src="img/WsIj5.jpg" alt="Two people recording at a podcast setup" loading="lazy" draggable="false"><span class="kb__code" aria-hidden="true">Podcast</span></div>
+        <figcaption class="kb__cap">
+          <button class="kb__name" type="button">Podcast setups ↗</button>
+          <a class="kb__book" href="https://wa.me/919352187963?text=Hi%20Elmuse%21%20I%27d%20like%20to%20book%20the%20Podcast%20setups%20at%20the%20studio." target="_blank" rel="noopener" aria-label="Book Podcast setups on WhatsApp">Book</a>
+          <span class="kb__meta">4 setups · Mics included</span>
+        </figcaption>
+      </figure>
+      <figure class="kb__card" style="grid-column:5 / 8;margin-top:0">
+        <div class="kb__ph media" data-p="spaces" data-lb="studio" data-cursor="View"><img src="img/uxp6U.jpg" alt="Set 005, the classic panelled wall with an easel" loading="lazy" draggable="false"><span class="kb__code" aria-hidden="true">Set 005</span></div>
+        <figcaption class="kb__cap">
+          <button class="kb__name" type="button">Classic panels ↗</button>
+          <a class="kb__book" href="https://wa.me/919352187963?text=Hi%20Elmuse%21%20I%27d%20like%20to%20book%20the%20Classic%20panels%20at%20the%20studio." target="_blank" rel="noopener" aria-label="Book Classic panels on WhatsApp">Book</a>
+          <span class="kb__meta">Panelled walls · Editorial</span>
+        </figcaption>
+      </figure>
+      <div class="kb__foot">
+        <p class="mute">Every booking includes lights, modifiers, stands and mics, plus a vanity, changing nook and steaming station.</p>
+        <a class="kb__all" href="https://www.elmuse.in/walkthrough" target="_blank" rel="noopener">All sets and the full walkthrough ↗</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 #shotatElmuse -->
+  <div class="wall-run" id="shot-run">
+  <section class="wall" id="shot" tabindex="0" data-cursor="Drag" aria-label="#shotatElmuse, a wall of photos made at Elmuse. Drag, or use the arrow keys, to explore. Click a print to open it.">
+    <div class="wall__plane" aria-hidden="true"></div>
+    <div class="wall__veil" aria-hidden="true"></div>
+    <div class="wall__title"><p class="l">Made here</p><h2 class="h">#shotatElmuse</h2></div>
+    <div class="wall__drag" aria-hidden="true"><span class="wall__knob"><svg viewBox="0 0 30 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 1 7l5 5M24 2l5 5-5 5M1 7h28"/></svg></span><span class="l">Drag to explore</span></div>
+    <p class="wall__hint l">Click a print to open it</p>
+    <a class="wall__ig cta cta--light" href="https://www.instagram.com/elmuse.studio/" target="_blank" rel="noopener">Follow @elmuse.studio <span class="cta__arr" aria-hidden="true">→</span></a>
+  </section>
+  </div>
+
+  <!-- 9 ending: write us a postcard; send folds it into a paper plane -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="rough"><feTurbulence type="fractalNoise" baseFrequency="1.6" numOctaves="2" result="n"/><feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -0.9 1.35" result="m"/><feComposite in="SourceGraphic" in2="m" operator="in"/></filter></svg>
+  <template id="card">
+  <div class="pcx__stage">
+    <svg class="pcx__trail" aria-hidden="true"><path d=""/></svg>
+    <div class="pcx__fly">
+      <article class="pc__card">
+        <div class="pc__face">
+          <div class="pc__photo">
+            <img src="img/postcard.jpg" alt="">
+            <video class="pc__cam" muted playsinline aria-hidden="true"></video>
+            <span class="pc__flash" aria-hidden="true"></span>
+            <input type="file" accept="image/*" tabindex="-1" aria-hidden="true">
+            <span class="pc__tools"><button class="pc__add l pc__snap-open" type="button">◉ Take a photo</button><button class="pc__add l pc__up" type="button">↑ Upload</button></span>
+            <span class="pc__shoot"><button class="pc__add l pc__cancel" type="button">Cancel</button><button class="pc__shutter" type="button" aria-label="Take the photo"><i></i></button><span class="pc__count" aria-live="polite"></span></span>
+            <span class="pc__cap l">Window light, Elmuse Studio</span>
+          </div>
+          <div class="pc__back">
+            <div class="pc__msg">
+              <p class="l mute">Contact</p>
+              <h2 class="h">Bring us your idea, let's co-create.</h2>
+              <textarea class="pc__note" maxlength="240" aria-label="Your note to Elmuse" placeholder="Dear Elmuse, here's the spark…"></textarea>
+              <div class="pc__sign">
+                <span class="pc__x" aria-hidden="true">×</span>
+                <span class="pc__ink" aria-hidden="true"></span>
+                <input class="pc__name" maxlength="26" aria-label="Your name, as a signature" placeholder="Sign here" autocomplete="name" spellcheck="false">
+              </div>
+              <div class="pc__go">
+                <button class="pc__send" type="button">Send postcard <i aria-hidden="true">↗</i></button>
+                <a class="link mute" href="https://wa.me/919352187963?text=Hi!%20I%27d%20like%20to%20book%20Elmuse%20Studio%20for..." target="_blank" rel="noopener">Book the studio</a>
+              </div>
+            </div>
+            <div class="pc__rule" aria-hidden="true"></div>
+            <div class="pc__to">
+              <p class="pc__line"><span class="l mute">To</span>elmuse° studio</p>
+              <p class="pc__line"><span class="miss">Street address</span></p>
+              <p class="pc__line">Jaipur, Rajasthan</p>
+              <p class="pc__line"><a href="https://wa.me/919352187963" target="_blank" rel="noopener">+91 93521 87963</a></p>
+              <p class="pc__line"><a href="https://www.instagram.com/elmuse.studio/" target="_blank" rel="noopener">@elmuse.studio</a></p>
+            </div>
+            <div class="pc__stamp" aria-hidden="true"><div>elmuse°</div></div>
+            <div class="pc__post" aria-hidden="true"><span>JAIPUR<br><span class="pc__date"></span><br>RAJASTHAN</span></div>
+          </div>
+        </div>
+        <div class="pc__sent" aria-hidden="true"><span>JAIPUR<b>SENT</b><span class="pc__date"></span></span></div>
+        <div class="pc__fold" aria-hidden="true"></div>
+      </article>
+    </div>
+  </div>
+  <p class="pcx__toast" role="status" hidden></p>
+</template>
+  <section class="pcx" id="contact" data-mode="plane" aria-label="Contact"></section>
+</main>
+
+<div class="cursor l" aria-hidden="true"></div>
+
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Image viewer" hidden>
+  <aside class="lb__side">
+    <button class="lb__close link l" type="button">← Go back</button>
+    <div class="lb__info">
+      <span class="tag lb__tag"></span>
+      <h2 class="lb__title"></h2>
+      <p class="lb__cap mute"></p>
+    </div>
+    <div class="lb__foot">
+      <p class="l mute lb__count"></p>
+      <div class="lb__nav"><button class="link l lb__prev" type="button">Previous</button><button class="link l lb__next" type="button">Next</button></div>
+    </div>
+  </aside>
+  <div class="lb__main">
+    <div class="lb__stage"><img alt=""></div>
+    <div class="lb__thumbs" aria-label="All photos in this set"></div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const finePointer = matchMedia('(hover: hover) and (pointer: fine)').matches;
+  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+
+  /* ---------- nav: hides on scroll down, returns on scroll up; recolours over dark sections ---------- */
+  const nav = document.getElementById('nav');
+  const hero = document.getElementById('hero');
+  const darkSecs = ['hero', 'chapters', 'reel', 'shot'].map(id => document.getElementById(id));
+  const navMap = { '#what': ['what', 'chapters'], '#work': ['work'], '#studio': ['studio'], '#contact': ['contact'] };
+  const navLinks = [...nav.querySelectorAll('.nav__pill a')].map(a => [a, (navMap[a.getAttribute('href')] || []).map(id => document.getElementById(id))]);
+  let lastY = scrollY;
+  const navState = () => {
+    const y = scrollY, dy = y - lastY;
+    if (y < 80 || dy < -4) nav.classList.remove('is-hidden');
+    else if (dy > 4 && !nav.contains(document.activeElement)) nav.classList.add('is-hidden');
+    if (Math.abs(dy) > 4) lastY = y;
+    nav.classList.toggle('on-dark', darkSecs.some(s => { const r = s.getBoundingClientRect(); return r.top <= 36 && r.bottom > 36; }));
+    let cur = null;
+    const line = innerHeight * .4;
+    for (const [a, secs] of navLinks) if (secs.some(sec => { const r = sec.getBoundingClientRect(); return r.top <= line && r.bottom > line; })) cur = a;
+    navLinks.forEach(([a]) => a.classList.toggle('is-current', a === cur));
+  };
+  addEventListener('scroll', navState, { passive: true }); navState();
+  nav.addEventListener('focusin', () => nav.classList.remove('is-hidden'));
+
+  /* ---------- images: wipe open on entry ---------- */
+  const reveal = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('is-in'); reveal.unobserve(e.target); } }), { threshold: .12, rootMargin: '0px 0px -6% 0px' });
+  document.querySelectorAll('.media').forEach(el => reveal.observe(el));
+
+  /* ---------- the photo inside the How we work line flips through the process ---------- */
+  if (!reduce) {
+    const inl = document.querySelector('.inl img');
+    const seq = ['F8Umq', 'uxp6U', 'zWXJJ', '0X9tr', 'O2rLN'];
+    let k = 0;
+    seq.forEach(id => { const im = new Image(); im.src = 'img/t/' + id + '.jpg'; });
+    setInterval(() => {
+      const r = inl.getBoundingClientRect();
+      if (r.bottom < 0 || r.top > innerHeight) return;
+      k = (k + 1) % seq.length;
+      inl.style.opacity = 0;
+      setTimeout(() => { inl.src = 'img/t/' + seq[k] + '.jpg'; inl.style.opacity = 1; }, 400);
+    }, 2400);
+  }
+
+  /* ---------- photos wait on their pillar colour, then fade in ---------- */
+  const fadeIn = img => { img.classList.remove('ph-wait'); img.classList.add('ph-in'); };
+  document.querySelectorAll('[data-p] img').forEach(img => {
+    if (img.complete && img.naturalWidth) return;
+    img.classList.add('ph-wait');
+    img.addEventListener('load', () => fadeIn(img), { once: true });
+    img.addEventListener('error', () => img.classList.remove('ph-wait'), { once: true });
+  });
+
+  /* ---------- scroll-linked image motion: hero drift, parallax, studio widening ---------- */
+  const heroImg = hero.querySelector('.hero__media img');
+  const heroCap = hero.querySelector('.hero__cap');
+  const para = [...document.querySelectorAll('.media img')];
+  const wide = document.querySelector('.studio .wide');
+  const wideImg = wide && wide.querySelector('img');
+  let ticking = false;
+  const frame = () => {
+    ticking = false;
+    if (reduce) return;
+    const vh = innerHeight;
+    // hero: the photo drifts down slower than the page; the line fades as it leaves
+    if (scrollY < vh * 1.2) {
+      heroImg.style.translate = `0 ${(scrollY * .35).toFixed(1)}px`;
+      const f = clamp(1 - scrollY / (vh * .55), 0, 1);
+      heroCap.style.opacity = f; heroCap.style.translate = `0 ${((1 - f) * -24).toFixed(1)}px`;
+    }
+    // parallax: each photo moves a little against its frame
+    for (const img of para) {
+      const r = img.parentElement.getBoundingClientRect();
+      if (r.bottom < -100 || r.top > vh + 100) continue;
+      const p = (r.top + r.height / 2 - vh / 2) / (vh / 2 + r.height / 2); // -1..1
+      img.style.translate = `0 ${(clamp(p, -1, 1) * r.height * .04).toFixed(1)}px`;
+    }
+    // studio: starts inset, widens to full bleed as it reaches the middle of the screen
+    const wr = wide ? wide.getBoundingClientRect() : { bottom: -1, top: 0 };
+    if (wide && wr.bottom > 0 && wr.top < vh) {
+      const t = clamp((vh - wr.top) / (vh * .75), 0, 1);
+      const side = (1 - t) * 8, top = (1 - t) * 6;
+      wide.style.clipPath = `inset(${top.toFixed(2)}% ${side.toFixed(2)}% 0 ${side.toFixed(2)}%)`;
+      wideImg.style.translate = `0 ${((t - .5) * -40).toFixed(1)}px`;
+    }
+  };
+  addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(frame); } }, { passive: true });
+  addEventListener('resize', frame);
+  frame();
+
+  /* ---------- cursor label over images (mouse only) ---------- */
+  if (finePointer && !reduce) {
+    const cur = document.querySelector('.cursor');
+    let cx = innerWidth / 2, cy = innerHeight / 2, tx = cx, ty = cy, on = false;
+    addEventListener('pointermove', e => {
+      tx = e.clientX; ty = e.clientY;
+      const host = e.target.closest('[data-cursor]');
+      let text = '';
+      // a print on the wall says Open, the empty wall says Drag, any photo says View
+      if (host && lb.hidden) text = host.matches('.wall') ? (e.target.closest('.tile') ? 'Open' : 'Drag') : (e.target.closest('[data-lb]') ? 'View' : host.dataset.cursor);
+      if (text) cur.textContent = text;
+      if (!!text !== on) { on = !!text; cur.classList.toggle('is-on', on); document.documentElement.classList.toggle('cur-on', on); }
+    }, { passive: true });
+    document.addEventListener('pointerleave', () => { on = false; cur.classList.remove('is-on'); document.documentElement.classList.remove('cur-on'); });
+    const loop = () => { cx += (tx - cx) * .2; cy += (ty - cy) * .2; cur.style.transform = `translate3d(${cx.toFixed(1)}px,${cy.toFixed(1)}px,0)`; requestAnimationFrame(loop); };
+    loop();
+  }
+
+  /* ---------- full-screen viewer: cream ground, info panel, thumbnail strip ---------- */
+  const PILLAR = { brands: ['Brands', 't-brands'], spaces: ['Spaces', 't-spaces'], exp: ['Experiences', 't-exp'] };
+  const GROUPS = { how: { title: 'The muse process', pillar: 'brands' }, work: { title: 'Details worth noticing', pillar: 'brands' }, studio: { title: 'The studio', pillar: 'spaces' } };
+  const thumbOf = src => /\/t\//.test(src) ? src : src.replace(/img\/([^/]+)$/, 'img/t/$1');
+  const lb = document.getElementById('lb');
+  const lbImg = lb.querySelector('.lb__stage img');
+  const lbCap = lb.querySelector('.lb__cap');
+  const lbCount = lb.querySelector('.lb__count');
+  const lbTitle = lb.querySelector('.lb__title');
+  const lbTag = lb.querySelector('.lb__tag');
+  const lbThumbs = lb.querySelector('.lb__thumbs');
+  let items = [], idx = 0, lastFocus = null, meta = {};
+  const show = i => {
+    idx = (i + items.length) % items.length;
+    lbImg.classList.remove('is-shown');
+    const it = items[idx];
+    const [name, cls] = PILLAR[it.pillar || meta.pillar] || PILLAR.spaces;
+    lbTag.textContent = name; lbTag.className = 'tag lb__tag ' + cls;
+    const pre = new Image(); pre.src = it.src;
+    pre.onload = pre.onerror = () => { if (items[idx] !== it) return; lbImg.src = it.src; lbImg.alt = it.alt; requestAnimationFrame(() => lbImg.classList.add('is-shown')); };
+    lbCap.textContent = it.alt; lbCount.textContent = `Photo ${idx + 1} / ${items.length}`;
+    [...lbThumbs.children].forEach((b, j) => { b.classList.toggle('is-on', j === idx); b.setAttribute('aria-current', String(j === idx)); });
+    const on = lbThumbs.children[idx];
+    on && on.scrollIntoView({ block: 'nearest', inline: 'center', behavior: reduce ? 'auto' : 'smooth' });
+  };
+  const openLB = (list, i, m = {}) => {
+    items = list; meta = m; lastFocus = document.activeElement;
+    lbTitle.textContent = m.title || '';
+    lbThumbs.textContent = '';
+    list.forEach((it, j) => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.dataset.p = it.pillar || m.pillar || 'spaces';
+      b.setAttribute('aria-label', `Show photo ${j + 1}: ${it.alt}`);
+      b.innerHTML = `<img src="${thumbOf(it.src)}" alt="" loading="lazy">`;
+      b.addEventListener('click', () => show(j));
+      lbThumbs.appendChild(b);
+    });
+    lb.hidden = false; document.body.style.overflow = 'hidden';
+    requestAnimationFrame(() => lb.classList.add('is-open'));
+    show(i); lb.querySelector('.lb__close').focus();
+  };
+  const closeLB = () => {
+    lb.classList.remove('is-open'); document.body.style.overflow = '';
+    setTimeout(() => { lb.hidden = true; lbImg.removeAttribute('src'); }, reduce ? 0 : 350);
+    lastFocus && lastFocus.focus && lastFocus.focus();
+  };
+  lb.querySelector('.lb__close').addEventListener('click', closeLB);
+  lb.querySelector('.lb__prev').addEventListener('click', () => show(idx - 1));
+  lb.querySelector('.lb__next').addEventListener('click', () => show(idx + 1));
+  lb.querySelector('.lb__stage').addEventListener('click', e => { if (e.target === e.currentTarget) closeLB(); });
+  addEventListener('keydown', e => {
+    if (lb.hidden) return;
+    if (e.key === 'Escape') closeLB();
+    if (e.key === 'ArrowRight') show(idx + 1);
+    if (e.key === 'ArrowLeft') show(idx - 1);
+  });
+  let sx = null;
+  lb.querySelector('.lb__stage').addEventListener('pointerdown', e => { sx = e.clientX; });
+  lb.querySelector('.lb__stage').addEventListener('pointerup', e => { if (sx !== null && Math.abs(e.clientX - sx) > 50) show(idx + (e.clientX < sx ? 1 : -1)); sx = null; });
+
+  // any element with data-lb opens its group in the viewer
+  const groupOf = name => [...document.querySelectorAll(`[data-lb="${name}"]`)].map(el => {
+    const img = el.querySelector('img');
+    return { el, src: img.dataset.full || img.currentSrc || img.src, alt: img.alt };
+  });
+  document.querySelectorAll('[data-lb]').forEach(el => {
+    el.tabIndex = 0; el.setAttribute('role', 'button');
+    const open = () => { const g = groupOf(el.dataset.lb); openLB(g, g.findIndex(x => x.el === el), GROUPS[el.dataset.lb]); };
+    el.addEventListener('click', e => { if (el.closest('.drag.was-dragged')) return; open(); });
+    el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+  });
+
+
+  /* ---------- spaces: the name opens its photo in the viewer ---------- */
+  document.querySelectorAll('.kb__name').forEach(b => b.addEventListener('click', () => b.closest('.kb__card').querySelector('[data-lb]').click()));
+
+  /* ---------- sideways strips: drag with momentum (mouse); touch scrolls natively ---------- */
+  document.querySelectorAll('.drag').forEach(strip => {
+    let down = null, v = 0, raf = 0;
+    strip.addEventListener('pointerdown', e => {
+      if (e.pointerType !== 'mouse' || e.button !== 0) return;
+      cancelAnimationFrame(raf);
+      down = { x: e.clientX, left: strip.scrollLeft, moved: 0, last: e.clientX };
+      strip.classList.remove('was-dragged');
+    });
+    addEventListener('pointermove', e => {
+      if (!down) return;
+      const dx = e.clientX - down.x;
+      down.moved = Math.max(down.moved, Math.abs(dx));
+      if (down.moved > 4) strip.classList.add('is-dragging');
+      v = e.clientX - down.last; down.last = e.clientX;
+      strip.scrollLeft = down.left - dx;
+    });
+    addEventListener('pointerup', () => {
+      if (!down) return;
+      if (down.moved > 4) { strip.classList.add('was-dragged'); setTimeout(() => strip.classList.remove('was-dragged'), 0); }
+      strip.classList.remove('is-dragging'); down = null;
+      if (reduce) return;
+      const glide = () => { strip.scrollLeft -= v; v *= .93; if (Math.abs(v) > .4) raf = requestAnimationFrame(glide); };
+      glide();
+    });
+  });
+
+
+
+
+  /* ---------- what we do: the sentence fills in word by word as you scroll; the card flips through shoots ---------- */
+  (() => {
+    const sec = document.getElementById('what');
+    const say = sec.querySelector('.wwd__say');
+    const words = say.textContent.trim().split(/\s+/);
+    say.innerHTML = words.map(w => `<span class="w">${w}</span>`).join(' ');
+    const spans = [...say.querySelectorAll('.w')];
+    let queued = false;
+    const fill = () => {
+      queued = false;
+      const r = say.getBoundingClientRect(), vh = innerHeight;
+      const p = reduce ? 1 : clamp((vh * .85 - r.top) / (vh * .55), 0, 1);
+      const n = Math.round(p * spans.length);
+      spans.forEach((s, i) => s.classList.toggle('on', i < n));
+    };
+    addEventListener('scroll', () => { if (!queued) { queued = true; requestAnimationFrame(fill); } }, { passive: true });
+    fill();
+    // the stack: tap and the front print flies off and tucks in at the back
+    const stack = sec.querySelector('.wwd__stack');
+    const count = sec.querySelector('.wwd__count');
+    const cards = [...stack.querySelectorAll('.wwd__card')];
+    const N = cards.length, ROT = [-4, 3, -1.5, 5, -3, 1.5, -5];
+    let order = cards.map((_, i) => i), front = 0, busy = false;
+    const lay = () => order.forEach((ci, d) => {
+      const c = cards[ci];
+      c.style.setProperty('--d', d);
+      c.style.setProperty('--rot', ROT[ci % ROT.length] + 'deg');
+      c.style.setProperty('--o', d > 3 ? 0 : 1);
+    });
+    lay();
+    const next = () => {
+      if (busy) return;
+      const top = cards[order[0]];
+      const settle = () => {
+        order.push(order.shift());
+        front = (front + 1) % N;
+        top.classList.remove('is-out');
+        lay();
+        count.textContent = String(front + 1).padStart(2, '0') + ' / ' + String(N).padStart(2, '0') + ' · Tap the stack';
+        busy = false;
+      };
+      busy = true;
+      if (reduce) return settle();
+      top.classList.add('is-out');
+      setTimeout(() => { top.style.zIndex = 0; settle(); setTimeout(() => { top.style.zIndex = ''; }, 560); }, 380);
+    };
+    stack.addEventListener('click', next);
+  })();
+
+  /* ---------- work: vertical scroll slides the reel sideways; tiles reveal as they arrive ---------- */
+  (() => {
+    const sec = document.getElementById('work');
+    const stage = sec.querySelector('.wk__stage');
+    const track = sec.querySelector('.wk__track');
+    const bar = sec.querySelector('.wk__bar');
+    let dist = 0, queued = false;
+    const size = () => {
+      if (reduce) return;
+      dist = Math.max(0, track.scrollWidth - stage.clientWidth);
+      sec.style.height = (dist + innerHeight) + 'px';
+      update();
+    };
+    const update = () => {
+      queued = false;
+      if (reduce) return;
+      const p = clamp(-sec.getBoundingClientRect().top / Math.max(1, sec.offsetHeight - innerHeight), 0, 1);
+      track.style.transform = `translate3d(${(-p * dist).toFixed(1)}px,0,0)`;
+      bar.style.setProperty('--p', p.toFixed(4));
+    };
+    addEventListener('scroll', () => { if (!queued) { queued = true; requestAnimationFrame(update); } }, { passive: true });
+    addEventListener('resize', size);
+    addEventListener('load', size);
+    size();
+
+    // tiles open as they slide into view
+    const tin = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('is-in'); tin.unobserve(e.target); } }), { threshold: 0, rootMargin: '0px 12% 0px 0px' });
+    sec.querySelectorAll('.wk__tile').forEach(t => tin.observe(t));
+
+    // films play while on screen; click or the label pauses them
+    sec.querySelectorAll('.wk__film').forEach(tile => {
+      const v = tile.querySelector('video'), b = tile.querySelector('.wk__toggle');
+      let wanted = !reduce, seen = false;
+      const sync = () => { (wanted && seen) ? v.play().catch(() => {}) : v.pause(); const t = wanted ? 'Pause' : 'Play'; b.textContent = t; tile.dataset.cursor = t; };
+      new IntersectionObserver(([e]) => { seen = e.isIntersecting; sync(); }, { threshold: .4 }).observe(tile);
+      tile.addEventListener('click', () => { wanted = !wanted; sync(); });
+      sync();
+    });
+  })();
+
+  /* ---------- entrance: text rises in, rules draw across, hero line arrives after the photo ---------- */
+  (() => {
+    const skip = '.walk, .chapters, .wall, .reel, .lb, .nav, .hero, .wk__track';
+    document.querySelectorAll('.wwd, .how, .studio, .end').forEach(sec => {
+      [...sec.querySelectorAll('h2, h3, p, li, dt, dd, blockquote, figcaption')]
+        .filter(el => !el.closest(skip) && !el.closest('.rise') && !el.querySelector('p, li, h2, h3'))
+        .forEach(el => { el.classList.add('rise'); });
+      // stagger siblings inside each row of the grid
+      sec.querySelectorAll('.g, .rows, .specs, .steps, ol, ul').forEach(group => {
+        [...group.querySelectorAll('.rise')].forEach((el, i) => el.style.setProperty('--i', Math.min(i, 8)));
+      });
+    });
+    const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); } }), { threshold: .15, rootMargin: '0px 0px -5% 0px' });
+    document.querySelectorAll('.rise, .ruled').forEach(el => io.observe(el));
+    const hero = document.getElementById('hero');
+    setTimeout(() => hero.classList.add('is-in'), reduce ? 0 : 500);
+  })();
+
+  /* ---------- what we do: each chapter's photo wipes up over the last; the text swaps ---------- */
+  (() => {
+    const sec = document.getElementById('chapters');
+    const figs = [...sec.querySelectorAll('.ch__img')];
+    const texts = [...sec.querySelectorAll('.ch__text')];
+    const ticks = [...sec.querySelectorAll('.ch__ticks i')];
+    const count = sec.querySelector('.ch__count span');
+    const n = figs.length;
+    const ease = t => t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+    let active = -1, queued = false;
+    const update = () => {
+      queued = false;
+      const r = sec.getBoundingClientRect();
+      const p = clamp(-r.top / (sec.offsetHeight - innerHeight), 0, 1);
+      // hold a little at each end so the first and last chapters can be read
+      const k = clamp((p - .08) / .84, 0, 1) * (n - 1);
+      const reveal = figs.map((_, i) => i === 0 ? 1 : (reduce ? (k >= i - .5 ? 1 : 0) : ease(clamp(k - (i - 1), 0, 1))));
+      figs.forEach((f, i) => {
+        if (i > 0) f.style.clipPath = `inset(${((1 - reveal[i]) * 100).toFixed(2)}% 0 0 0)`;
+        if (!reduce) {
+          const next = reveal[i + 1] || 0;
+          f.firstElementChild.style.translate = `0 ${((1 - reveal[i]) * 9 - next * 5).toFixed(2)}%`;
+        }
+      });
+      ticks.forEach((t, j) => t.style.setProperty('--f', clamp(k - j + 1, 0, 1).toFixed(3)));
+      const a = clamp(Math.round(k), 0, n - 1);
+      if (a !== active) {
+        active = a;
+        texts.forEach((t, i) => { t.classList.toggle('is-on', i === a); t.inert = i !== a; });
+        count.textContent = String(a + 1).padStart(2, '0');
+      }
+    };
+    addEventListener('scroll', () => { if (!queued) { queued = true; requestAnimationFrame(update); } }, { passive: true });
+    addEventListener('resize', update);
+    update();
+  })();
+
+  /* ---------- the walk: scroll moves you through the studio, 09:00 to 18:00 ---------- */
+  (() => {
+    const sec = document.querySelector('.walk');
+    const frames = [...sec.querySelectorAll('.walk__f')];
+    const box = sec.querySelector('.walk__frames');
+    const tint = sec.querySelector('.walk__tint');
+    const sun = sec.querySelector('.walk__sun');
+    const clock = sec.querySelector('.walk__clock');
+    const light = sec.querySelector('.walk__light');
+    const station = sec.querySelector('.walk__station');
+    const num = sec.querySelector('.walk__num');
+    const name = sec.querySelector('.walk__name');
+    const bar = sec.querySelector('.walk__bar');
+    const hold = sec.querySelector('.walk__hold');
+    const N = frames.length;
+    const smooth = t => t * t * (3 - 2 * t);
+    const lerp = (a, b, t) => a + (b - a) * t;
+
+    // the light through the day: hour, brightness, saturation, sepia, tint colour + strength
+    const DAY = [
+      [9,    .92, .92, 0,   [150, 185, 220, .30]],
+      [11,   1.0, 1.0, 0,   [205, 218, 232, .12]],
+      [13,   1.05,1.02,.02, [255, 246, 226, .08]],
+      [15.5, 1.02,1.1, .12, [255, 200, 130, .26]],
+      [17,   .86, 1.15,.25, [255, 150,  70, .38]],
+      [18,   .42, .85, .2,  [ 40,  50,  90, .50]]
+    ];
+    const lightAt = h => {
+      let a = DAY[0], b = DAY[DAY.length - 1];
+      for (let k = 0; k < DAY.length - 1; k++) if (h >= DAY[k][0] && h <= DAY[k + 1][0]) { a = DAY[k]; b = DAY[k + 1]; break; }
+      const t = b[0] === a[0] ? 0 : (h - a[0]) / (b[0] - a[0]);
+      return { b: lerp(a[1], b[1], t), s: lerp(a[2], b[2], t), sp: lerp(a[3], b[3], t), c: a[4].map((v, i) => lerp(v, b[4][i], t)) };
+    };
+    const lightName = h => h < 11 ? 'Morning light' : h < 14 ? 'Midday' : h < 16.3 ? 'Afternoon sun' : h < 17.4 ? 'Golden hour' : 'Dusk';
+    const fmt = h => { const m = Math.round(h * 60 / 5) * 5; return String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'); };
+
+    let shown = -1, lit = false, queued = false;
+    const setStation = k => {
+      if (k === shown) return;
+      shown = k;
+      station.classList.add('is-swapping');
+      setTimeout(() => { num.textContent = frames[k].dataset.num; name.textContent = frames[k].dataset.name; station.classList.remove('is-swapping'); }, reduce ? 0 : 180);
+    };
+    const setLit = on => {
+      lit = on; sec.classList.toggle('is-lit', on);
+      if (on) { clock.textContent = 'Lights on'; light.textContent = 'Studio lights'; num.textContent = 'Lights on'; name.textContent = 'The studio, lit for a shoot.'; shown = -1; }
+    };
+
+    const update = () => {
+      queued = false;
+      const r = sec.getBoundingClientRect(), H = innerHeight;
+      const p = clamp(-r.top / (sec.offsetHeight - H), 0, 1);
+      const pw = clamp(p / .86, 0, 1);              // the walk; the last stretch holds at dusk
+      const f = pw * (N - 1);
+      const i = Math.min(N - 2, Math.floor(f)), t = f - i;
+
+      frames.forEach((im, k) => {
+        let o = 0, sc = 1;
+        if (k === i) { o = 1; sc = 1.02 + .16 * t; }
+        else if (k === i + 1) { o = reduce ? (t > .5 ? 1 : 0) : smooth(clamp((t - .45) / .55, 0, 1)); sc = .98 + .04 * t; }
+        im.style.opacity = o.toFixed(3);
+        if (!reduce) im.style.scale = sc.toFixed(4);
+      });
+
+      const h = 9 + pw * 9;
+      const L = lightAt(h);
+      box.style.filter = lit ? 'brightness(1.04) saturate(1.05)' : `brightness(${L.b.toFixed(3)}) saturate(${L.s.toFixed(3)}) sepia(${L.sp.toFixed(3)})`;
+      tint.style.background = lit ? 'rgba(255,214,160,.14)' : `rgba(${L.c.slice(0, 3).map(Math.round).join(',')},${L.c[3].toFixed(3)})`;
+      if (!reduce) {
+        const sunO = clamp(1 - Math.abs(h - 13.5) / 4.5, 0, 1) * .9;
+        sun.style.opacity = lit ? 0 : sunO.toFixed(3);
+        sun.style.transform = `translate3d(${(-30 + pw * 60).toFixed(2)}%,0,0)`;
+      }
+      bar.style.setProperty('--pw', pw.toFixed(4));
+
+      if (lit && p < .8) setLit(false);
+      if (!lit) {
+        clock.textContent = fmt(h);
+        light.textContent = lightName(h);
+        setStation(t > .5 ? i + 1 : i);
+      }
+      sec.classList.toggle('is-dusk', p > .9);
+    };
+    addEventListener('scroll', () => { if (!queued) { queued = true; requestAnimationFrame(update); } }, { passive: true });
+    addEventListener('resize', update);
+    update();
+
+    // press and hold to switch on the lights; letting go early winds the ring back
+    let held = 0, start = 0, holding = false, raf = 0, timer = 0;
+    const DURATION = 1100;
+    const complete = () => {
+      clearTimeout(timer); cancelAnimationFrame(raf);
+      holding = false; held = 0; hold.style.setProperty('--hold', 0);
+      setLit(true); update();
+    };
+    const tick = now => {
+      if (holding) held = clamp((now - start) / DURATION, 0, 1);
+      else held = Math.max(0, held - .06);
+      hold.style.setProperty('--hold', held.toFixed(3));
+      if (held >= 1 && holding) return complete();
+      if (holding || held > 0) raf = requestAnimationFrame(tick);
+    };
+    const begin = e => {
+      if (lit) return; e.preventDefault();
+      holding = true; start = performance.now() - held * DURATION;
+      cancelAnimationFrame(raf); raf = requestAnimationFrame(tick);
+      // the timer finishes the hold even if animation frames are paused
+      clearTimeout(timer); timer = setTimeout(() => { if (holding) complete(); }, DURATION * (1 - held) + 30);
+    };
+    const stop = () => { if (!holding) return; holding = false; clearTimeout(timer); cancelAnimationFrame(raf); raf = requestAnimationFrame(tick); };
+    hold.addEventListener('pointerdown', begin);
+    hold.addEventListener('pointerup', stop);
+    hold.addEventListener('pointerleave', stop);
+    hold.addEventListener('pointercancel', stop);
+    hold.addEventListener('keydown', e => { if ((e.key === ' ' || e.key === 'Enter') && !e.repeat) begin(e); });
+    hold.addEventListener('keyup', e => { if (e.key === ' ' || e.key === 'Enter') stop(); });
+    hold.addEventListener('click', e => e.preventDefault());
+  })();
+
+  /* ---------- reel: scrolling opens the window between "play" and "reel" ---------- */
+  (() => {
+    const sec = document.getElementById('reel');
+    const stage = sec.querySelector('.reel__stage');
+    const words = sec.querySelectorAll('.reel__words .h');
+    const gap = sec.querySelector('.reel__gap');
+    const vids = [...sec.querySelectorAll('video')];
+    const btn = sec.querySelector('.reel__toggle');
+    const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    const lerp = (a, b, t) => a + (b - a) * t;
+    let inView = false, playing = !reduce, queued = false;
+    const update = () => {
+      queued = false;
+      if (reduce) return;
+      const r = sec.getBoundingClientRect(), W = stage.clientWidth, H = stage.clientHeight;
+      const p = clamp(-r.top / (r.height - H), 0, 1);
+      const e = ease(Math.min(1, p / .7));
+      const w0 = gap.getBoundingClientRect().width, h0 = w0 * 1.33;
+      const w = lerp(w0, W, e), h = lerp(h0, H, e);
+      stage.style.setProperty('--ix', ((W - w) / 2).toFixed(1) + 'px');
+      stage.style.setProperty('--iy', ((H - h) / 2).toFixed(1) + 'px');
+      stage.style.setProperty('--zoom', lerp(1.1, 1, e).toFixed(3));
+      stage.style.setProperty('--foot', e > .92 ? 1 : 0);
+      const shift = e * W * .55, fade = Math.max(0, 1 - e * 1.7);
+      words[0].style.transform = `translateX(${-shift}px)`; words[1].style.transform = `translateX(${shift}px)`;
+      words[0].style.opacity = words[1].style.opacity = fade;
+    };
+    addEventListener('scroll', () => { if (!queued) { queued = true; requestAnimationFrame(update); } }, { passive: true });
+    addEventListener('resize', update);
+    update();
+    const sync = () => vids.forEach(v => (inView && playing) ? v.play().catch(() => {}) : v.pause());
+    new IntersectionObserver(([en]) => { inView = en.isIntersecting; sync(); }).observe(sec);
+    const label = () => { btn.textContent = playing ? 'Pause' : 'Play reel'; btn.setAttribute('aria-pressed', String(!playing)); };
+    btn.addEventListener('click', () => { playing = !playing; label(); sync(); });
+    label();
+  })();
+
+  /* ---------- #shotatElmuse: endless wall; drag to move, click a print to open it ---------- */
+  (() => {
+    const wall = document.getElementById('shot');
+    const plane = wall.querySelector('.wall__plane');
+    const P = [
+      ['0X9tr','Campaign · red paper','p'],['2AUYz','Afternoon light','l'],['6BtDg','Paper 18 · evergreen','p'],['Gou73','Set 001 · display wall','p'],
+      ['WsIj5','Podcast · conversation corner','l'],['s1uNj','Detail','p'],['6riNA','Dance & movement','p'],['bQhAQ','Set 002 · boho corner','p'],
+      ['F4GWV','Cyc wall','l'],['JjYDg','Portrait','p'],['O2rLN','The mirror','p'],['bIdhE','Set 003 · lounge','l'],
+      ['Avc8P','Cyc wall · drapes','p'],['WFVYJ','Set 004 · earth gradient','p'],['ayWV8','Podcast · behind the scenes','l'],['2yq93','Sunlit moments','p'],
+      ['uxp6U','Set 005 · classic panels','p'],['DlmPa','Modular setups','l'],['6RCSx','Still life','p'],['5p9bW','Set 006 · credenza chic','p'],
+      ['zWXJJ','On set','l'],['VMlXD','Sunlit moments','p'],['4ZkYo','The doorway','p'],['ezXzo','Podcast · minimalist','l'],
+      ['F8Umq','Behind the scenes','p'],['SdrcZ','Still life','p'],['mx6gy','3,500 sq ft','l'],['z4c0k','Corner light','p'],
+      ['m5Pcv','Podcast · lounge','p'],['ibOeZ','The kit','l'],['NRxQX','Sunlit moments','p']
+    ];
+    const N = P.length;
+    const pillarOf = label => /dance/i.test(label) ? 'exp' : /campaign|portrait|detail|still life|evergreen|on set|behind/i.test(label) ? 'brands' : 'spaces';
+    const all = P.map(([id, label]) => ({ src: 'img/' + id + '.jpg', alt: label, pillar: pillarOf(label) }));
+    const mod = (a, n) => ((a % n) + n) % n;
+    const rnd = (a, b) => { const v = Math.sin(a * 127.1 + b * 311.7) * 43758.5453; return v - Math.floor(v); };
+    let cw, ch, C, R, pool = [], ox = 0, oy = 0, vx = 0, vy = 0;
+
+    const build = () => {
+      const W = wall.clientWidth, H = wall.clientHeight, small = W < 700;
+      cw = small ? 200 : 320; ch = small ? 260 : 390;
+      C = Math.ceil(W / cw) + 2; R = Math.ceil(H / ch) + 2;
+      plane.textContent = ''; pool = [];
+      for (let j = 0; j < R; j++) for (let i = 0; i < C; i++) {
+        const el = document.createElement('figure'); el.className = 'tile';
+        el.innerHTML = '<div class="tile__in"><img alt="" draggable="false" decoding="async"><figcaption></figcaption></div>';
+        plane.appendChild(el);
+        const img = el.querySelector('img');
+        img.addEventListener('load', () => { img.classList.remove('ph-wait'); img.classList.add('ph-in'); });
+        pool.push({ el, i, j, img, cap: el.querySelector('figcaption'), key: '', idx: 0 });
+      }
+    };
+    const render = () => {
+      const wrapW = C * cw, wrapH = R * ch;
+      for (const t of pool) {
+        const px = t.i * cw + ox, kx = Math.floor(px / wrapW), col = t.i - kx * C;
+        const py = t.j * ch + oy + (mod(col, 2) ? ch * .45 : 0), ky = Math.floor(py / wrapH), row = t.j - ky * R;
+        const key = col + ':' + row;
+        if (t.key !== key) {
+          t.key = key;
+          t.idx = mod(col + row * 7, N);
+          const [id, label, o] = P[t.idx];
+          const land = o === 'l';
+          t.w = (land ? .82 : .58) * cw * (.9 + rnd(col, row) * .2);
+          t.jx = (rnd(row, col) - .5) * cw * .22; t.jy = (rnd(col + 9, row) - .5) * ch * .2;
+          t.el.style.width = t.w + 'px';
+          t.el.style.setProperty('--r', ((rnd(col + 3, row + 5) - .5) * 8).toFixed(2) + 'deg');
+          t.el.style.setProperty('--ar', land ? '4/3' : '3/4');
+          t.el.dataset.idx = t.idx;
+          t.el.dataset.p = all[t.idx].pillar;
+          t.img.classList.remove('ph-in'); t.img.classList.add('ph-wait');
+          t.img.src = 'img/t/' + id + '.jpg';
+          t.cap.innerHTML = '<i class="dot"></i>' + label;
+        }
+        const x = px - kx * wrapW - cw + (cw - t.w) / 2 + t.jx;
+        const y = py - ky * wrapH - ch + t.jy;
+        t.el.style.transform = `translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,0)`;
+      }
+    };
+
+    let drag = null, last = 0;
+    wall.addEventListener('pointerdown', e => {
+      if (e.button !== 0 || e.target.closest('a')) return;
+      drag = { x: e.clientX, y: e.clientY, sx: e.clientX, sy: e.clientY, touch: e.pointerType !== 'mouse', tile: e.target.closest('.tile') };
+      vx = vy = 0; last = performance.now();
+      wall.setPointerCapture(e.pointerId); wall.classList.add('is-dragging');
+    });
+    wall.addEventListener('pointermove', e => {
+      if (!drag) return;
+      const now = performance.now(), dt = Math.max(1, now - last) / 16.7;
+      const dx = e.clientX - drag.x, dy = drag.touch ? 0 : e.clientY - drag.y;
+      ox += dx; oy += dy; vx = dx / dt; vy = dy / dt;
+      if (Math.hypot(drag.x - drag.sx, drag.y - drag.sy) > 8) { wall.classList.add('has-dragged', 'is-busy'); clearTimeout(wall._quiet); }
+      drag.x = e.clientX; drag.y = e.clientY; last = now;
+    });
+    const end = e => {
+      if (!drag) return;
+      const moved = Math.hypot(e.clientX - drag.sx, e.clientY - drag.sy);
+      // a click (not a drag) on a print opens it full screen
+      if (moved < 6 && drag.tile) { vx = vy = 0; openLB(all, +drag.tile.dataset.idx, { title: '#shotatElmuse' }); }
+      drag = null; wall.classList.remove('is-dragging');
+      clearTimeout(wall._quiet); wall._quiet = setTimeout(() => wall.classList.remove('is-busy'), 2500);
+    };
+    wall.addEventListener('pointerup', end);
+    wall.addEventListener('pointercancel', () => { drag = null; wall.classList.remove('is-dragging'); });
+    wall.addEventListener('keydown', e => {
+      const k = { ArrowLeft: [14, 0], ArrowRight: [-14, 0], ArrowUp: [0, 14], ArrowDown: [0, -14] }[e.key];
+      if (k) { e.preventDefault(); vx += k[0]; vy += k[1]; }
+    });
+
+    // one sideways nudge, so the wall shows it moves before anyone touches it
+    wall.nudge = () => { if (!reduce) { vx -= 16; } };
+    let visible = false, raf = 0;
+    const loop = () => {
+      if (!drag && lb.hidden) {
+        ox += vx; oy += vy; vx *= .94; vy *= .94;
+        if (!reduce && Math.abs(vx) + Math.abs(vy) < .3) { ox -= .3; oy -= .1; }
+        if (reduce && Math.abs(vx) + Math.abs(vy) < .05) { vx = vy = 0; }
+      }
+      render();
+      raf = visible ? requestAnimationFrame(loop) : 0;
+    };
+    new IntersectionObserver(([e]) => { visible = e.isIntersecting; if (visible && !raf) raf = requestAnimationFrame(loop); }).observe(wall);
+    let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { build(); render(); }, 150); });
+    build(); render();
+  })();
+
+  /* ---------- the wall opens from a small window to the full screen as you scroll ---------- */
+  (() => {
+    const run = document.getElementById('shot-run');
+    const wall = document.getElementById('shot');
+    const ease = t => 1 - Math.pow(1 - t, 3);
+    const lerp = (a, b, t) => a + (b - a) * t;
+    let nudged = false, queued = false;
+    const update = () => {
+      queued = false;
+      if (reduce) return;
+      const small = innerWidth < 820;
+      const r = run.getBoundingClientRect();
+      const p = clamp(-r.top / Math.max(1, run.offsetHeight - innerHeight), 0, 1);
+      const e = ease(clamp(p / .6, 0, 1));
+      wall.style.setProperty('--wx', lerp(small ? 4 : 8, 0, e).toFixed(2) + '%');
+      wall.style.setProperty('--wy', lerp(small ? 7 : 8, 0, e).toFixed(2) + '%');
+      wall.style.setProperty('--wr', lerp(28, 0, e).toFixed(1) + 'px');
+      wall.style.setProperty('--wo', e > .95 ? 1 : 0);
+      if (e > .98 && !nudged && wall.nudge) { nudged = true; wall.nudge(); }
+      if (p === 0) nudged = false;
+    };
+    addEventListener('scroll', () => { if (!queued) { queued = true; requestAnimationFrame(update); } }, { passive: true });
+    addEventListener('resize', update);
+    update();
+  })();
+})();
+</script>
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const today = new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric' }).format(new Date()).toUpperCase();
+  const wait = ms => new Promise(r => setTimeout(r, ms));
+  // ---------- B: a real paper plane, folded and flown in 3D (three.js) ----------
+  let threeLib;
+  const loadThree = () => threeLib ||= import('https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js');
+  if (!reduce) loadThree().catch(() => {});
+  const loadImg = src => new Promise(res => { const i = new Image(); i.onload = () => res(i); i.onerror = () => res(null); i.src = src; });
+  const ease = x => x * x * (3 - 2 * x);
+  const span = (t, a, b) => ease(Math.min(1, Math.max(0, (t - a) / (b - a))));
+
+  // the card face, painted onto the sheet so the fold starts from what they wrote
+  async function paintFace({ img, note, name }) {
+    await Promise.all(['22px "Special Elite"', '56px "Mrs Saint Delafield"', '34px Regie', '15px "Proxima Nova"'].map(f => document.fonts.load(f).catch(() => {})));
+    const W = 1500, H = 1000, c = document.createElement('canvas'); c.width = W; c.height = H;
+    const x = c.getContext('2d');
+    x.fillStyle = '#FBF8F2'; x.fillRect(0, 0, W, H);
+    const px = 27, py = 27, pw = W * .44 - 27, ph = H - 54;
+    if (img && img.naturalWidth) { const s = Math.max(pw / img.naturalWidth, ph / img.naturalHeight), sw = pw / s, sh = ph / s; x.drawImage(img, (img.naturalWidth - sw) / 2, (img.naturalHeight - sh) / 2, sw, sh, px, py, pw, ph); }
+    const bx = W * .44 + 52, colW = (W - bx - 48) * .56, rx = bx + colW + 34;
+    x.fillStyle = '#5E594F'; x.font = '15px "Proxima Nova"'; x.letterSpacing = '1.6px'; x.fillText('CONTACT', bx, 82);
+    x.fillStyle = '#1B2414'; x.font = '34px Regie'; x.letterSpacing = '0.4px';
+    const wrap = (text, max) => { const out = []; let line = ''; for (const w of text.split(/\s+/)) { const t = line ? line + ' ' + w : w; if (x.measureText(t).width > max && line) { out.push(line); line = w; } else line = t; } if (line) out.push(line); return out; };
+    wrap("BRING US YOUR IDEA, LET'S CO-CREATE.", colW).forEach((l, i) => x.fillText(l, bx, 124 + i * 38));
+    x.strokeStyle = 'rgba(27,36,20,.16)'; x.lineWidth = 1.5;
+    x.font = '22px "Special Elite"'; x.letterSpacing = '0px'; x.fillStyle = '#26241F';
+    const lines = wrap(note, colW).slice(0, 5);
+    for (let i = 0; i < 5; i++) { const y = 250 + i * 46; x.beginPath(); x.moveTo(bx, y + 10); x.lineTo(bx + colW, y + 10); x.stroke(); if (lines[i]) x.fillText(lines[i], bx, y); }
+    x.font = '60px "Mrs Saint Delafield"'; x.fillStyle = '#1F2F5A'; x.fillText(name || '', bx + 30, 560);
+    x.beginPath(); x.moveTo(bx, 580); x.lineTo(bx + colW, 580); x.stroke();
+    x.beginPath(); x.moveTo(rx - 17, 70); x.lineTo(rx - 17, H - 70); x.stroke();
+    x.font = '19px "Proxima Nova"'; x.fillStyle = '#1B2414';
+    ['elmuse° studio', 'Street address', 'Jaipur, Rajasthan', '+91 93521 87963', '@elmuse.studio'].forEach((t, i) => { const y = H - 290 + i * 54; x.fillText(t, rx, y); x.beginPath(); x.moveTo(rx, y + 16); x.lineTo(W - 48, y + 16); x.stroke(); });
+    const stamp = await loadImg('img/2AUYz.jpg');
+    x.save(); x.translate(W - 150, 60); x.rotate(.05); x.fillStyle = '#FBF8F2'; x.shadowColor = 'rgba(40,34,20,.18)'; x.shadowBlur = 8; x.fillRect(0, 0, 104, 124); x.shadowBlur = 0; if (stamp) x.drawImage(stamp, 300, 0, 900, 1057, 7, 7, 90, 110); x.restore();
+    return c;
+  }
+  function paintReverse() {
+    const c = document.createElement('canvas'); c.width = 600; c.height = 400; const x = c.getContext('2d');
+    x.fillStyle = '#F4EFE6'; x.fillRect(0, 0, 600, 400);
+    x.strokeStyle = 'rgba(27,36,20,.12)'; x.lineWidth = 1; x.beginPath(); x.moveTo(300, 40); x.lineTo(300, 360); x.stroke();
+    x.fillStyle = 'rgba(27,36,20,.35)'; x.font = '13px "Proxima Nova"'; x.letterSpacing = '3px'; x.fillText('POST CARD · ELMUSE° JAIPUR', 40, 40);
+    return c;
+  }
+
+  async function flyPlane({ card, fly, img, note, name }) {
+    const THREE = await loadThree();
+    const vw = innerWidth, vh = innerHeight;
+    const r = fly.getBoundingClientRect(), cw = card.offsetWidth;
+    const H2 = 2 / 3;                       // sheet is 2 x 4/3 units, the card's 3:2
+    const ppu = cw / 2, fov = 35, D = vh / (ppu * 2 * Math.tan(fov * Math.PI / 360));
+    const toW = (sx, sy, sz = 0) => new THREE.Vector3((sx - vw / 2) / ppu, -(sy - vh / 2) / ppu, sz / ppu);
+
+    const canvas = document.createElement('canvas');
+    Object.assign(canvas.style, { position: 'fixed', inset: '0', width: '100%', height: '100%', pointerEvents: 'none', zIndex: 50, filter: 'drop-shadow(0 18px 16px rgba(40,34,20,.16))' });
+    document.body.appendChild(canvas);
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+    renderer.setPixelRatio(Math.min(2, devicePixelRatio || 1)); renderer.setSize(vw, vh, false);
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(fov, vw / vh, .1, 1000); camera.position.set(0, 0, D);
+    scene.add(new THREE.HemisphereLight(0xffffff, 0xcfc4b0, 2.1));
+    const sun = new THREE.DirectionalLight(0xfff8ec, 1.25); sun.position.set(-1.5, 3, 7); scene.add(sun);
+
+    const faceTex = new THREE.CanvasTexture(await paintFace({ img, note, name })); faceTex.colorSpace = THREE.SRGBColorSpace; faceTex.anisotropy = 8;
+    const revTex = new THREE.CanvasTexture(paintReverse()); revTex.colorSpace = THREE.SRGBColorSpace; revTex.wrapS = THREE.RepeatWrapping; revTex.repeat.x = -1;
+    const geo = new THREE.PlaneGeometry(2, 2 * H2, 120, 80);
+    const base = geo.attributes.position.array.slice();
+    const front = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ map: faceTex, side: THREE.FrontSide, roughness: 1, flatShading: true }));
+    const back = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ map: revTex, side: THREE.BackSide, roughness: 1, flatShading: true }));
+    const stand = new THREE.Group(); stand.rotation.x = -Math.PI / 2; stand.add(front, back);
+    const flyer = new THREE.Group(); flyer.add(stand); scene.add(flyer);
+
+    // origami: corners to the centre line, fold in half, wings down
+    const S2 = Math.SQRT1_2, KEEL = 1.42, WK = .12, T8 = Math.tan(Math.PI / 8), C8 = Math.cos(Math.PI / 8), N8 = Math.sin(Math.PI / 8);
+    const rot = (p, ax, ay, ux, uy, uz, a) => { // rotate p about the line through (ax,ay,0) with unit dir u
+      const x = p[0] - ax, y = p[1] - ay, z = p[2], c = Math.cos(a), s = Math.sin(a), d = (ux * x + uy * y + uz * z) * (1 - c);
+      p[0] = ax + x * c + (uy * z - uz * y) * s + ux * d; p[1] = ay + y * c + (uz * x - ux * z) * s + uy * d; p[2] = z * c + (ux * y - uy * x) * s + uz * d;
+    };
+    const wl = Math.hypot(1.97, WK), wdx = -1.97 / wl, wdy = WK / wl;
+    const pos = geo.attributes.position.array, p = [0, 0, 0];
+    const fold = (t1, tb, t2, t3) => {
+      const a1 = Math.PI * .985 * t1, ab = Math.PI * .985 * tb, th = KEEL * t2, tw = KEEL * t3;
+      for (let i = 0; i < pos.length; i += 3) {
+        const bx = base[i], by = base[i + 1]; p[0] = bx; p[1] = by; p[2] = 0;
+        if (by > 0 && bx > 1 - by) { rot(p, 1, 0, -S2, S2, 0, -a1); p[2] += .004 * t1; }
+        else if (by < 0 && bx > 1 + by) { rot(p, 1, 0, -S2, -S2, 0, a1); p[2] += .004 * t1; }
+        // second fold: the new slanted edges to the centre again, for the long nose
+        if (p[1] > 0 && p[1] > T8 * (1 - p[0])) { rot(p, 1, 0, -C8, N8, 0, -ab); p[2] += .004 * tb; }
+        else if (p[1] < 0 && -p[1] > T8 * (1 - p[0])) { rot(p, 1, 0, -C8, -N8, 0, ab); p[2] += .004 * tb; }
+        const top = p[1] >= 0, edge = WK * (.97 - p[0]) / 1.97;
+        if (top && p[1] > edge) rot(p, .97, 0, wdx, wdy, 0, tw);
+        else if (!top && -p[1] > edge) rot(p, .97, 0, wdx, -wdy, 0, -tw);
+        const a = top ? th : -th, c = Math.cos(a), s = Math.sin(a), y = p[1], z = p[2];
+        pos[i] = p[0]; pos[i + 1] = y * c - z * s; pos[i + 2] = y * s + z * c;
+      }
+      geo.attributes.position.needsUpdate = true;
+    };
+
+    // flight: a loop over the card, then out to the right, like the reference
+    const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+    // a tour of the whole screen: out to the right, loop over the top, down the left, under the card, away
+    const path = new THREE.CatmullRomCurve3([
+      [cx, cy, 0], [vw * .72, vh * .76, 60], [vw * .9, vh * .52, 100], [vw * .86, vh * .2, 40], [vw * .6, vh * .1, -40],
+      [vw * .32, vh * .18, -60], [vw * .12, vh * .44, 0], [vw * .2, vh * .76, 60], [vw * .5, vh * .86, 80], [vw * .74, vh * .56, 20], [vw + 360, -280, -120]
+    ].map(([x, y, z]) => toW(x, y, z)), false, 'centripetal', .5);
+    const q0 = new THREE.Quaternion().setFromEuler(new THREE.Euler(Math.PI / 2, 0, -.024, 'XYZ'));
+    const basis = (f, u) => { const z = new THREE.Vector3().crossVectors(f, u).normalize(); const uu = new THREE.Vector3().crossVectors(z, f).normalize(); return new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().makeBasis(f, uu, z)); };
+    const TILT = .42;
+    const f0 = path.getTangentAt(0); let up = new THREE.Vector3(0, 1, 0);
+    const q1 = basis(f0, up).multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), TILT));
+
+    // wind streaks: drawn from the flight path itself (not the wobbling wingtips), so they stay smooth
+    const TR = 90, LEN = .11, ink = new THREE.Color('#2B3D21'), bg = new THREE.Color('#F7F3ED');
+    const Z = new THREE.Vector3(0, 0, 1), streaks = [{ off: .13, len: 1, a: .8 }, { off: -.13, len: 1, a: .8 }, { off: 0, len: .6, a: .4 }];
+    const trails = streaks.map(() => {
+      const g = new THREE.BufferGeometry(), tp = new Float32Array(TR * 3), tc = new Float32Array(TR * 3);
+      g.setAttribute('position', new THREE.BufferAttribute(tp, 3)); g.setAttribute('color', new THREE.BufferAttribute(tc, 3));
+      const line = new THREE.Line(g, new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: .75 })); line.frustumCulled = false; line.visible = false; scene.add(line);
+      return { g, tp, tc, line };
+    });
+    const drawTrails = (head, tail) => trails.forEach((tr, k) => {
+      const st = streaks[k], from = Math.max(0, head - (head - tail) * st.len);
+      for (let i = 0; i < TR; i++) {
+        const f = i / (TR - 1), uu = from + (head - from) * f;
+        const q = path.getPointAt(Math.min(uu, 1)), side = new THREE.Vector3().crossVectors(path.getTangentAt(Math.min(uu, .999)), Z).normalize();
+        q.addScaledVector(side, st.off * (.35 + .65 * f));                       // streaks widen as they reach the wings
+        tr.tp.set([q.x, q.y, q.z], i * 3);
+        const cc = bg.clone().lerp(ink, Math.pow(f, 1.5) * st.a); tr.tc.set([cc.r, cc.g, cc.b], i * 3);
+      }
+      tr.line.visible = head > from + .002;
+      tr.g.attributes.position.needsUpdate = true; tr.g.attributes.color.needsUpdate = true;
+    });
+
+    const FOLD = 2100, FLIGHT = 5200, TAIL = 700;
+    card.style.opacity = '0';
+    const t0 = performance.now();
+    await new Promise(done => {
+      let prevF = f0.clone(), bankS = 0;
+      const frame = now => {
+        const t = now - t0;
+        if (t < FOLD) {
+          fold(span(t, 200, 700), span(t, 700, 1200), span(t, 1250, 1700), span(t, 1650, 2050));
+          const s = 1 - .79 * span(t, 150, 1400);
+          flyer.scale.setScalar(s);
+          flyer.position.copy(path.getPointAt(0));
+          flyer.quaternion.copy(q0).slerp(q1, span(t, 800, 2050));
+        } else {
+          fold(1, 1, 1, 1); flyer.scale.setScalar(.21);
+          const k = Math.min(1, (t - FOLD) / FLIGHT), u = .4 * k + .6 * k * k;
+          const f = path.getTangentAt(Math.min(u, .999));
+          up.sub(f.clone().multiplyScalar(up.dot(f))).normalize();                    // carry "up" through the loop
+          const bank = THREE.MathUtils.clamp(new THREE.Vector3().crossVectors(prevF, f).dot(up) * -14, -.6, .6);
+          bankS += (bank - bankS) * .08; prevF = f;                                   // eased, so the plane rolls instead of twitching
+          flyer.position.copy(path.getPointAt(Math.min(u, 1)));
+          flyer.quaternion.copy(basis(f, up)).multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), TILT + bankS));
+          const tailEnd = t > FOLD + FLIGHT ? Math.min(1, (t - FOLD - FLIGHT) / TAIL) : 0;
+          drawTrails(Math.min(u, 1), Math.max(0, Math.min(u, 1) - LEN) + (1 - Math.max(0, Math.min(u, 1) - LEN)) * tailEnd);
+        }
+        renderer.render(scene, camera);
+        if (t < FOLD + FLIGHT + TAIL) requestAnimationFrame(frame); else done();
+      };
+      requestAnimationFrame(frame);
+    });
+    renderer.dispose(); geo.dispose(); faceTex.dispose(); revTex.dispose(); canvas.remove();
+  }
+  const tpl = document.getElementById('card');
+  const DEFAULT_IMG = 'img/postcard.jpg';
+
+  document.querySelectorAll('.pcx').forEach(root => {
+    root.appendChild(tpl.content.cloneNode(true));
+    const $ = s => root.querySelector(s);
+    const stage = $('.pcx__stage'), fly = $('.pcx__fly'), card = $('.pc__card'), face = card.querySelectorAll('.pc__photo, .pc__back');
+    const photo = $('.pc__photo'), img = photo.querySelector('img'), file = photo.querySelector('input'), add = $('.pc__up'), snap = $('.pc__snap-open'), cap = $('.pc__cap');
+    const note = $('.pc__note'), name = $('.pc__name'), ink = $('.pc__ink'), send = $('.pc__send');
+    const sent = $('.pc__sent'), fold = $('.pc__fold'), trail = $('.pcx__trail path'), toast = $('.pcx__toast');
+    root.querySelectorAll('.pc__date').forEach(d => d.textContent = today);
+    let own = false, busy = false;
+
+    // their own photo: click, keyboard, or drop it on the front
+    const usePhoto = f => { if (!f || !f.type.startsWith('image/')) return; if (own) URL.revokeObjectURL(img.src); img.src = URL.createObjectURL(f); own = true; snap.textContent = '◉ Retake'; add.textContent = '↑ Change photo'; cap.textContent = 'Your photo'; };
+    $('.pc__up').addEventListener('click', () => file.click());
+
+    // camera: the photo frame turns into a live viewfinder; the shot develops like a print
+    const cam = $('.pc__cam'), flash = $('.pc__flash'), count = $('.pc__count'), snapBtn = $('.pc__snap-open');
+    let stream = null;
+    const stopCam = () => { if (stream) stream.getTracks().forEach(t => t.stop()); stream = null; cam.srcObject = null; photo.classList.remove('is-cam'); count.textContent = ''; };
+    const camHint = msg => { const old = photo.querySelector('.pc__note-cam'); if (old) old.remove(); const p = document.createElement('span'); p.className = 'pc__note-cam'; p.textContent = msg; photo.appendChild(p); setTimeout(() => p.remove(), 4200); };
+    snapBtn.addEventListener('click', async () => {
+      if (!navigator.mediaDevices?.getUserMedia) { camHint("This browser can't open the camera here. Upload a photo instead."); file.click(); return; }
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 1280 } }, audio: false });
+        cam.srcObject = stream; await cam.play(); photo.classList.add('is-cam'); $('.pc__shutter').focus();
+      } catch (err) {
+        stopCam();
+        camHint(err.name === 'NotAllowedError' ? 'Camera blocked. Allow it in the address bar, or upload a photo instead.' : 'No camera found. Upload a photo instead.');
+      }
+    });
+    $('.pc__cancel').addEventListener('click', stopCam);
+    $('.pc__shutter').addEventListener('click', async () => {
+      if (!stream) return;
+      if (!reduce) for (const n of ['3', '2', '1']) { count.textContent = n; await wait(650); }
+      count.textContent = '';
+      // crop the mirrored frame to the shape of the photo window
+      const fw = photo.clientWidth, fh = photo.clientHeight, vw = cam.videoWidth, vh = cam.videoHeight;
+      const scale = Math.max(fw / vw, fh / vh), sw = fw / scale, sh = fh / scale, sx = (vw - sw) / 2, sy = (vh - sh) / 2;
+      const c = document.createElement('canvas'), k = Math.min(2, devicePixelRatio || 1);
+      c.width = Math.round(fw * k); c.height = Math.round(fh * k);
+      const ctx = c.getContext('2d'); ctx.translate(c.width, 0); ctx.scale(-1, 1);
+      ctx.drawImage(cam, sx, sy, sw, sh, 0, 0, c.width, c.height);
+      if (!reduce) flash.animate([{ opacity: .95 }, { opacity: 0 }], { duration: 650, easing: 'ease-out' });
+      stopCam();
+      c.toBlob(b => { usePhoto(new File([b], 'postcard.jpg', { type: 'image/jpeg' })); cap.textContent = 'Taken just now'; if (!reduce) { photo.classList.remove('is-dev'); void photo.offsetWidth; photo.classList.add('is-dev'); } }, 'image/jpeg', .9);
+    });
+    addEventListener('pagehide', stopCam);
+    file.addEventListener('change', () => usePhoto(file.files[0]));
+    photo.addEventListener('dragover', e => { e.preventDefault(); photo.classList.add('is-drop'); });
+    photo.addEventListener('dragleave', () => photo.classList.remove('is-drop'));
+    photo.addEventListener('drop', e => { e.preventDefault(); photo.classList.remove('is-drop'); usePhoto(e.dataTransfer.files[0]); });
+
+    // the signature inks itself in as they type: one pen stroke revealing the new letters
+    let inkW = 0;
+    name.addEventListener('input', () => {
+      ink.textContent = name.value;
+      const w = ink.scrollWidth, grow = w - inkW;
+      ink.getAnimations().forEach(x => x.cancel());
+      if (grow > 0 && !reduce) ink.animate([{ clipPath: `inset(-60% ${grow + 40}px -60% -40px)` }, { clipPath: 'inset(-60% -40px -60% -40px)' }], { duration: Math.min(650, 160 + grow * 9), easing: 'cubic-bezier(.3,.6,.3,1)' });
+      inkW = w;
+    });
+    name.addEventListener('scroll', () => { ink.style.transform = `translateX(${-name.scrollLeft}px)`; });
+
+    const message = () => {
+      let m = `Hi Elmuse! ${note.value.trim()}`;
+      if (name.value.trim()) m += `\n\n— ${name.value.trim()}`;
+      if (own) m += `\n\n(I'll attach my photo here.)`;
+      return 'https://wa.me/919352187963?text=' + encodeURIComponent(m);
+    };
+    const reset = () => {
+      note.value = ''; name.value = ''; ink.textContent = ''; ink.style.transform = ''; inkW = 0;
+      stopCam(); photo.classList.remove('is-dev');
+      if (own) { URL.revokeObjectURL(img.src); img.src = DEFAULT_IMG; own = false; snap.textContent = '◉ Take a photo'; add.textContent = '↑ Upload'; cap.textContent = 'Window light, Elmuse Studio'; }
+    };
+    const showToast = href => {
+      toast.innerHTML = '';
+      toast.append('Your postcard is on its way.');
+      const a = document.createElement('a'); a.className = 'link'; a.href = href; a.target = '_blank'; a.rel = 'noopener'; a.textContent = 'Deliver it on WhatsApp ↗';
+      toast.append(a);
+      toast.hidden = false; toast.classList.remove('is-in'); void toast.offsetWidth; toast.classList.add('is-in');
+    };
+    const riseIn = () => card.animate([{ transform: 'translateY(60px) scale(.96)', opacity: 0 }, { transform: 'translateY(-6px) scale(1.005)', opacity: 1, offset: .7 }, { transform: 'none', opacity: 1 }], { duration: 700, easing: 'cubic-bezier(.2,.7,.2,1)' }).finished;
+
+    // A: postmark, then into the post
+    const posted = async () => {
+      sent.animate([{ opacity: 0, transform: 'scale(1.9)' }, { opacity: .95, transform: 'scale(1)' }], { duration: 170, easing: 'cubic-bezier(.6,0,.9,.6)', fill: 'forwards' });
+      await wait(150);
+      card.animate([{ transform: 'none' }, { transform: 'translateY(4px) scale(.995)' }, { transform: 'none' }], { duration: 220 });
+      await wait(750);
+      await card.animate([{ transform: 'none', opacity: 1 }, { transform: 'translateY(14px) rotate(1deg)', opacity: 1, offset: .2 }, { transform: 'translateY(-115%) rotate(-7deg) scale(.86)', opacity: 0 }], { duration: 900, easing: 'cubic-bezier(.6,0,.75,.3)', fill: 'forwards' }).finished;
+      sent.getAnimations().forEach(a => a.cancel());
+    };
+
+    // B: hand the card to the 3D fold; fall back to the post if WebGL or the library is unavailable
+    const plane = async () => {
+      try { await flyPlane({ card, fly, img, note: note.value.trim(), name: name.value.trim() }); }
+      catch (e) { console.warn('paper plane fell back to the post', e); card.style.opacity = ''; await posted(); }
+    };
+
+    send.addEventListener('click', async () => {
+      if (busy) return;
+      if (!note.value.trim()) { note.focus(); note.classList.remove('pc__wiggle'); void note.offsetWidth; note.classList.add('pc__wiggle'); return; }
+      busy = true; root.setAttribute('aria-busy', 'true');
+      const href = message();
+      if (!reduce) await (root.dataset.mode === 'plane' ? plane() : posted());
+      card.getAnimations().forEach(a => a.cancel());
+      card.style.opacity = '';
+      reset();
+      if (!reduce) await riseIn();
+      showToast(href);
+      busy = false; root.removeAttribute('aria-busy');
+    });
+  });
+})();
+</script>
+</body>
+</html>

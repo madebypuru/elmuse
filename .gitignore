@@ -1,0 +1,8 @@
+# publish only the live homepage and its assets; drafts, backups and study pages stay local
+/*
+!/.gitignore
+!/.nojekyll
+!/index.html
+!/img/
+!/fonts/
+/img/prod/sheet.html
